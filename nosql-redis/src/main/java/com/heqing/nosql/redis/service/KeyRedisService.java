@@ -1,0 +1,191 @@
+package com.heqing.nosql.redis.service;
+
+import java.util.Set;
+
+/**
+ * 键
+ * @author heqing
+ * @date 2018/7/18
+ */
+public interface KeyRedisService {
+
+    /**
+     * 删除给定的一个或多个 key 。不存在的 key 会被忽略。
+     *
+     * @param keys 需要删除的主键名
+     * @return 被删除 key 的数量
+     */
+    public Long del(String... keys);
+
+    /**
+     * 序列化给定 key ，并返回被序列化的值，使用 RESTORE 命令可以将这个值反序列化为 Redis 键。<br/>
+     *
+     * 序列化的值不包括任何生存时间信息。<br/>
+     * 序列化生成的值有以下几个特点：
+     * <ul>
+     *     <li>它带有 64 位的校验和，用于检测错误， RESTORE 在进行反序列化之前会先检查校验和。</li>
+     *     <li>值的编码格式和 RDB 文件保持一致。</li>
+     *     <li>RDB 版本会被编码在序列化值当中，如果因为 Redis 的版本不同造成 RDB 格式不兼容，那么 Redis 会拒绝对这个值进行反序列化操作。</li>
+     * </ul>
+     *
+     * @param key 主键名
+     * @return 如果 key 不存在，那么返回 null 。否则，返回序列化之后的值。
+     */
+    public String dump(String key);
+
+    /**
+     * 用于检查给定 key 是否存在。
+     *
+     * @param key 主键名
+     * @return 若 key 存在返回 true ，否则返回 false 。
+     */
+    public Boolean exists(String key);
+
+    /**
+     * 为给定 key 设置生存时间，当 key 过期时(生存时间为 0 )，它会被自动删除。<br/>
+     *
+     * 生存时间可以通过使用 DEL 命令来删除整个 key 来移除，或者被 SET 和 GETSET 命令覆写(overwrite)，
+     * 如果一个命令只是修改带生存时间的 key 的值，而不是用一个新的 key 值来代替它的话，那么生存时间不会被改变。
+     * 比如说，对一个 key 执行 INCR 命令，对一个列表进行 LPUSH 命令，或者对一个哈希表执行 HSET 命令，这类操作都不会修改 key 本身的生存时间。<br/>
+     * 另一方面，如果使用 RENAME 对一个 key 进行改名，那么改名后的 key 的生存时间和改名前一样。
+     * RENAME 命令的另一种可能是，尝试将一个带生存时间的 key 改名成另一个带生存时间的 another_key ，
+     * 这时旧的 another_key (以及它的生存时间)会被删除，然后旧的 key 会改名为 another_key ，因此，新的 another_key 的生存时间也和原本的 key 一样。<br/>
+     * 使用 PERSIST 命令可以在不删除 key 的情况下，移除 key 的生存时间，让 key 重新成为一个『持久的』(persistent) key 。
+     *
+     * @param key 主键名
+     * @param seconds 过期时间（以秒为单位）
+     * @return 若 key 存在返回 true ，否则返回 false 。
+     */
+    public Boolean expire(String key, int seconds);
+
+    /**
+     * 设置 key 的过期时间。key 过期后将不再可用。<br/>
+     *
+     * EXPIREAT 的作用和 EXPIRE 类似，都用于为 key 设置生存时间。
+     *
+     * @param key 主键名
+     * @param unixTime UNIX 时间戳(unix timestamp)
+     * @return 设置成功返回 true 。当 key 不存在或者不能为 key 设置过期时间时返回 false 。
+     */
+    public Boolean expireAt(String key, long unixTime);
+
+    /**
+     * 查找所有符合给定模式 pattern 的 key 。<br/>
+     *
+     * KEYS 的速度非常快，但在一个大的数据库中使用它仍然可能造成性能问题，如果你需要从一个数据集中查找特定的 key ，你最好还是用 Redis 的集合结构(set)来代替。
+     * <ul>
+     *     <li>KEYS * 匹配数据库中所有 key </li>
+     *     <li>KEYS h?llo 匹配 hello ， hallo 和 hxllo 等</li>
+     *     <li>KEYS h*llo 匹配 hllo 和 heeeeello 等</li>
+     *     <li>KEYS h[ae]llo 匹配 hello 和 hallo ，但不匹配 hillo </li>
+     * </ul>
+     *
+     * @param pattern 条件
+     * @return 设符合给定模式的 key 列表 (Array)。
+     */
+    public Set<String> keys(String pattern);
+
+    /**
+     * 将 key 原子性地从当前实例传送到目标实例的指定数据库上，一旦传送成功， key 保证会出现在目标实例上，而当前实例上的 key 会被删除。<br/>
+     *
+     * 这个命令是一个原子操作，它在执行的时候会阻塞进行迁移的两个实例，直到以下任意结果发生：迁移成功，迁移失败，等到超时。<br/>
+     * 命令的内部实现是这样的：它在当前实例对给定 key 执行 DUMP 命令 ，将它序列化，然后传送到目标实例，目标实例再使用 RESTORE 对数据进行反序列化，
+     * 并将反序列化所得的数据添加到数据库中；当前实例就像目标实例的客户端那样，只要看到 RESTORE 命令返回 OK ，它就会调用 DEL 删除自己数据库上的 key 。<br/>
+     * timeout 参数以毫秒为格式，指定当前实例和目标实例进行沟通的最大间隔时间。
+     * 这说明操作并不一定要在 timeout 毫秒内完成，只是说数据传送的时间不能超过这个 timeout 数。<br/>
+     * MIGRATE 命令需要在给定的时间规定内完成 IO 操作。如果在传送数据时发生 IO 错误，或者达到了超时时间，那么命令会停止执行，并返回一个特殊的错误： IOERR 。<br/>
+     * 当 IOERR 出现时，有以下两种可能：
+     * <ul>
+     *     <li>key 可能存在于两个实例</li>
+     *     <li>key 可能只存在于当前实例</li>
+     * </ul>
+     * 唯一不可能发生的情况就是丢失 key ，因此，如果一个客户端执行 MIGRATE 命令，并且不幸遇上 IOERR 错误，那么这个客户端唯一要做的就是检查自己数据库上的 key 是否已经被正确地删除。<br/>
+     * 如果有其他错误发生，那么 MIGRATE 保证 key 只会出现在当前实例中。（当然，目标实例的给定数据库上可能有和 key 同名的键，不过这和 MIGRATE 命令没有关系）。<br/>
+     * <ul>
+     *     <li>COPY ：不移除源实例上的 key 。</li>
+     *     <li>REPLACE ：替换目标实例上已存在的 key 。</li>
+     * </ul>
+     *
+     * @param host 地址
+     * @param port 端口号
+     * @param key 主键名
+     * @param destinationDb 数据库下标
+     * @param timeout 超时时间
+     * @return 移动成功返回 true ，失败则返回 false 。
+     */
+    public Boolean migrate(String host, int port, String key, int destinationDb, int timeout);
+
+    /**
+     * 将当前数据库的 key 移动到给定的数据库 db 当中。<br/>
+     *
+     * 如果当前数据库(源数据库)和给定数据库(目标数据库)有相同名字的给定 key ，或者 key 不存在于当前数据库，那么 MOVE 没有任何效果。<br/>
+     * 因此，也可以利用这一特性，将 MOVE 当作锁(locking)原语(primitive)。
+     *
+     * @param key 主键名
+     * @param dbIndex 数据库下标
+     * @return 当过期时间移除成功时，返回 true 。如果 key 不存在或 key 没有设置过期时间，返回 false 。
+     */
+    public Boolean move(String key, int dbIndex);
+
+    /**
+     * 返回给定 key 锁储存的值所使用的内部表示(representation)<br/>
+     * 对象可以以多种方式编码：
+     * <ul>
+     *     <li>字符串可以被编码为 raw (一般字符串)或 int (用字符串表示64位数字是为了节约空间)。</li>
+     *     <li>列表可以被编码为 ziplist 或 linkedlist 。 ziplist 是为节约大小较小的列表空间而作的特殊表示。</li>
+     *     <li>集合可以被编码为 intset 或者 hashtable 。 intset 是只储存数字的小集合的特殊表示。</li>
+     *     <li>哈希表可以编码为 zipmap 或者 hashtable 。 zipmap 是小哈希表的特殊表示。</li>
+     *     <li>有序集合可以被编码为 ziplist 或者 skiplist 格式。 ziplist 用于表示小的有序集合，而 skiplist 则用于表示任何大小的有序集合。</li>
+     * </ul>
+     *
+     * @param key 主键名
+     * @return 相应的编码类型。
+     */
+    public String objectEncoding(String key);
+
+    /**
+     * 返回给定 key 自储存以来的空转时间(idle， 没有被读取也没有被写入)，以秒为单位。<br/>
+     *
+     * @param key 主键名
+     * @return 没有被读取也没有被写入的秒数。
+     */
+    public long objectIdletime(String key);
+
+    /**
+     * 返回给定 key 引用所储存的值的次数。此命令主要用于除错<br/>
+     *
+     * @param key 主键名
+     * @return 储存的值的次数。
+     */
+    public long objectRefcount(String key);
+
+    /**
+     * 用于移除给定 key 的过期时间，使得 key 永不过期
+     *
+     * @param key 主键名
+     * @return 当过期时间移除成功时，返回 true 。如果 key 不存在或 key 没有设置过期时间，返回 false 。
+     */
+    public Boolean persist(String key);
+
+    /**
+     * 这个命令和 EXPIREAT 命令类似，但它以毫秒为单位设置 key 的过期 unix 时间戳，而不是像 EXPIREAT 那样，以秒为单位。
+     *
+     * @param key 主键名
+     * @param millisecondsTimestamp 毫秒级时间戳
+     * @return 当过期时间设置成功时，返回 true 。如果 key 不存在或 key 没办法设置过期时间，返回 false 。
+     */
+    public Boolean pExpireAt(String key, long millisecondsTimestamp);
+
+    /**
+     * 这个命令类似于 TTL 命令，但它以毫秒为单位返回 key 的剩余生存时间，而不是像 TTL 命令那样，以秒为单位。
+     *
+     * @param key 主键名
+     * @return 当 key不存在时，返回 -2。当key存在但没有设置剩余生存时间时，返回 -1。否则，以秒为单位返回 key 的剩余生存时间。
+     *         注意：在Redis2.8以前，当 key 不存在，或者 key 没有设置剩余生存时间时，命令都返回 -1 。
+     */
+    public Long pttl(String key);
+
+
+
+
+}
