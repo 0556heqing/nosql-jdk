@@ -26,41 +26,33 @@ public abstract class BaseManager {
     protected static Integer redisDb_index = 0;
 
     /**
-     * 可用连接实例的最大数目，默认值为8；
-     * 如果赋值为-1，则表示不限制；如果pool已经分配了maxActive个jedis实例，则此时pool的状态为exhausted(耗尽)。
+     * 可用连接实例的最大数目，默认值为8；如果赋值为-1，则表示不限制；<br/>
+     * 如果pool已经分配了maxActive个jedis实例，则此时pool的状态为exhausted(耗尽)。
      */
-    protected static Integer maxMotal = 0;
+    protected static Integer maxMotal = 8;
 
     /**
      * 等待可用连接的最大时间，单位毫秒，默认值为-1，表示永不超时。
      * 如果超过等待时间，则直接抛出JedisConnectionException；
      */
-    protected static Long maxWait = 0L;
+    protected static Long maxWait = -1L;
 
-    /**
-     * 控制一个pool最多有多少个状态为idle(空闲的)的jedis实例，默认值也是8。
-     */
-    protected static Integer maxIdle = 0;
+    /** 控制一个pool最多有多少个状态为idle(空闲的)的jedis实例，默认值也是8。 */
+    protected static Integer maxIdle = 8;
 
     /**
      * 控制一个pool最少有多少个状态为idle(空闲的)的jedis实例。
      */
     protected static Integer minIdle = 0;
 
-    /**
-     * 响应超时（默认2000ms）
-     */
-    protected static Integer timeOut = 0;
+    /** 响应超时（默认2000ms）*/
+    protected static Integer timeOut = 2000;
 
-    /**
-     * 空闲连接多长时间后会被收回
-     */
-    protected static Long minEvictableIdle = 0L;
+    /** 空闲连接多长时间后会被收回 */
+    protected static Long minEvictableIdle = 5000L;
 
-    /**
-     * 每30秒运行一次空闲连接回收器
-     */
-    protected static Long timeBetweenEvictionRuns = 0L;
+    /** 每30秒运行一次空闲连接回收器 */
+    protected static Long timeBetweenEvictionRuns = 30000L;
 
     static {
         ResourceBundle budleEnv = ResourceBundle.getBundle("redis_config");

@@ -1,5 +1,6 @@
 package com.heqing.nosql.redis.manager;
 
+import com.sun.deploy.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.*;
@@ -11,8 +12,6 @@ import redis.clients.jedis.*;
  */
 public class RedisManager extends BaseManager {
 
-    private final static String NULL = "null";
-
     private static final Logger logger = LoggerFactory.getLogger(RedisManager.class);
 
     private static JedisPool jedisPool = null;
@@ -21,7 +20,7 @@ public class RedisManager extends BaseManager {
 
     static {
         try {
-            if(NULL.endsWith(redisPassword)) {
+            if("".equals(redisPassword)) {
                 redisPassword = null;
             }
             jedisPool = new JedisPool(poolConfig, redisIp, redisPort, timeOut, redisPassword, redisDb_index);
