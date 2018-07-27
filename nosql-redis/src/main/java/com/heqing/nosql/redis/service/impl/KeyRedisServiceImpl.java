@@ -18,6 +18,8 @@ public class KeyRedisServiceImpl implements KeyRedisService {
 
     private JedisPool pool;
 
+    protected final static String OK = "OK";
+
     public KeyRedisServiceImpl() {}
 
     public JedisPool getJedisPool() {
@@ -119,7 +121,7 @@ public class KeyRedisServiceImpl implements KeyRedisService {
         try {
             jedis = getJedisPool().getResource();
             String result = jedis.migrate(host, port, key, destinationDb, timeout);
-            if("OK".equals(result)) {
+            if(OK.equals(result)) {
                 return true;
             }
             return false;
@@ -251,7 +253,7 @@ public class KeyRedisServiceImpl implements KeyRedisService {
     }
 
     @Override
-    public String randomkey() {
+    public String randomKey() {
         Jedis jedis = null;
         try {
             jedis = getJedisPool().getResource();
@@ -269,7 +271,7 @@ public class KeyRedisServiceImpl implements KeyRedisService {
         try {
             jedis = getJedisPool().getResource();
             String result = jedis.rename(oldkey, newkey);
-            if("OK".equals(result)) {
+            if(OK.equals(result)) {
                 return true;
             }
             return false;
@@ -303,7 +305,7 @@ public class KeyRedisServiceImpl implements KeyRedisService {
         try {
             jedis = getJedisPool().getResource();
             String result = jedis.restore(key, ttl, value.getBytes());
-            if("OK".equals(result)) {
+            if(OK.equals(result)) {
                 return true;
             }
             return false;
@@ -388,25 +390,6 @@ public class KeyRedisServiceImpl implements KeyRedisService {
                 result = jedis.sscan(key, cursor);
             } else {
                 result = jedis.sscan(key, cursor, params);
-            }
-            return result;
-        } finally {
-            if(jedis != null) {
-                jedis.close();
-            }
-        }
-    }
-
-    @Override
-    public ScanResult<Map.Entry<String, String>> hScan(String key, String cursor, ScanParams params) {
-        Jedis jedis = null;
-        try {
-            jedis = getJedisPool().getResource();
-            ScanResult<Map.Entry<String, String>> result = null;
-            if(params == null) {
-                result = jedis.hscan(key, cursor);
-            } else {
-                result = jedis.hscan(key, cursor, params);
             }
             return result;
         } finally {

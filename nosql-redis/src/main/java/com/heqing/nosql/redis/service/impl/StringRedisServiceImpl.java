@@ -13,8 +13,6 @@ import java.util.List;
  */
 public class StringRedisServiceImpl extends KeyRedisServiceImpl implements StringRedisService {
 
-    private final static String NULL = "null";
-
     @Override
     public Long append(String key, String value) {
         Jedis jedis = null;
@@ -55,7 +53,7 @@ public class StringRedisServiceImpl extends KeyRedisServiceImpl implements Strin
     }
 
     @Override
-    public Long bitop(BitOP op, String destKey, String... srcKeys) {
+    public Long bitOp(BitOP op, String destKey, String... srcKeys) {
         Jedis jedis = null;
         try {
             jedis = getJedisPool().getResource();
@@ -68,7 +66,7 @@ public class StringRedisServiceImpl extends KeyRedisServiceImpl implements Strin
     }
 
     @Override
-    public List<Long> bitfield(String key, String... arguments) {
+    public List<Long> bitField(String key, String... arguments) {
         Jedis jedis = null;
         try {
             jedis = getJedisPool().getResource();
@@ -94,7 +92,7 @@ public class StringRedisServiceImpl extends KeyRedisServiceImpl implements Strin
     }
 
     @Override
-    public Long decrby(String key, long decrement) {
+    public Long decrBy(String key, long decrement) {
         Jedis jedis = null;
         try {
             jedis = getJedisPool().getResource();
@@ -120,11 +118,273 @@ public class StringRedisServiceImpl extends KeyRedisServiceImpl implements Strin
     }
 
     @Override
-    public Boolean getbit(String key, long offset) {
+    public Boolean getBit(String key, long offset) {
         Jedis jedis = null;
         try {
             jedis = getJedisPool().getResource();
             return jedis.getbit(key, offset);
+        } finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    @Override
+    public String getRange(String key, long startOffset, long endOffset) {
+        Jedis jedis = null;
+        try {
+            jedis = getJedisPool().getResource();
+            return jedis.getrange(key, startOffset, endOffset);
+        } finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    @Override
+    public String getSet(String key, String value) {
+        Jedis jedis = null;
+        try {
+            jedis = getJedisPool().getResource();
+            return jedis.getSet(key, value);
+        } finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    @Override
+    public Long incr(String key) {
+        Jedis jedis = null;
+        try {
+            jedis = getJedisPool().getResource();
+            return jedis.incr(key);
+        } finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    @Override
+    public Long incrBy(String key, long increment) {
+        Jedis jedis = null;
+        try {
+            jedis = getJedisPool().getResource();
+            return jedis.incrBy(key, increment);
+        } finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    @Override
+    public Double incrByFloat(String key, double increment) {
+        Jedis jedis = null;
+        try {
+            jedis = getJedisPool().getResource();
+            return jedis.incrByFloat(key, increment);
+        } finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    @Override
+    public List<String> mGet(String... keys) {
+        Jedis jedis = null;
+        try {
+            jedis = getJedisPool().getResource();
+            return jedis.mget(keys);
+        } finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    @Override
+    public Boolean mSet(String... keyValues) {
+        Jedis jedis = null;
+        try {
+            jedis = getJedisPool().getResource();
+            String result = jedis.mset(keyValues);
+            if(OK.equals(result)) {
+                return true;
+            }
+            return false;
+        } finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    @Override
+    public Boolean mSetNx(String... keyValues) {
+        Jedis jedis = null;
+        try {
+            jedis = getJedisPool().getResource();
+            Long result = jedis.msetnx(keyValues);
+            if(1L == result) {
+                return true;
+            }
+            return false;
+        } finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    @Override
+    public Boolean pSetEx(String key, long milliseconds, String value) {
+        Jedis jedis = null;
+        try {
+            jedis = getJedisPool().getResource();
+            String result = jedis.psetex(key, milliseconds, value);
+            if(OK.equals(result)) {
+                return true;
+            }
+            return false;
+        } finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    @Override
+    public Boolean set(String key, String value) {
+        Jedis jedis = null;
+        try {
+            jedis = getJedisPool().getResource();
+            String result = jedis.set(key, value);
+            if(OK.equals(result)) {
+                return true;
+            }
+            return false;
+        } finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    @Override
+    public Boolean set(String key, String value, String nxxx) {
+        Jedis jedis = null;
+        try {
+            jedis = getJedisPool().getResource();
+            String result = jedis.set(key, value, nxxx);
+            if(OK.equals(result)) {
+                return true;
+            }
+            return false;
+        } finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    @Override
+    public Boolean set(String key, String value, String nxxx, String expx, long time) {
+        Jedis jedis = null;
+        try {
+            jedis = getJedisPool().getResource();
+            String result = jedis.set(key, value, nxxx, expx, time);
+            if(OK.equals(result)) {
+                return true;
+            }
+            return false;
+        } finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    @Override
+    public Boolean setBit(String key, long offset, boolean value) {
+        Jedis jedis = null;
+        try {
+            jedis = getJedisPool().getResource();
+            return jedis.setbit(key, offset, value);
+        } finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    @Override
+    public Boolean setBit(String key, long offset, String value) {
+        Jedis jedis = null;
+        try {
+            jedis = getJedisPool().getResource();
+            return jedis.setbit(key, offset, value);
+        } finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    @Override
+    public String setEx(String key, int seconds, String value) {
+        Jedis jedis = null;
+        try {
+            jedis = getJedisPool().getResource();
+            return jedis.setex(key, seconds, value);
+        } finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    @Override
+    public Boolean setNx(String key, String value) {
+        Jedis jedis = null;
+        try {
+            jedis = getJedisPool().getResource();
+            Long result = jedis.setnx(key, value);
+            if(1L == result) {
+                return true;
+            }
+            return false;
+        } finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    @Override
+    public Long setRange(String key, long offset, String value) {
+        Jedis jedis = null;
+        try {
+            jedis = getJedisPool().getResource();
+            return jedis.setrange(key, offset, value);
+        } finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    @Override
+    public Long setRange(String key) {
+        Jedis jedis = null;
+        try {
+            jedis = getJedisPool().getResource();
+            return jedis.strlen(key);
         } finally {
             if(jedis != null) {
                 jedis.close();

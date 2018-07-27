@@ -25,8 +25,9 @@ public class ShardedJedisManager extends  BaseManager {
             List<JedisShardInfo> jdsInfoList =new ArrayList<JedisShardInfo>();
             JedisShardInfo infoA = new JedisShardInfo(redisIp, redisPort);
             jdsInfoList.add(infoA);
+            // 有密码加入AUTH
             if("".equals(redisPassword)) {
-                infoA.setPassword(redisPassword);    //有密码加入AUTH
+                infoA.setPassword(redisPassword);
             }
             shardedJedisPool = new ShardedJedisPool(poolConfig, jdsInfoList);
 
