@@ -302,25 +302,4 @@ public interface KeyRedisService {
      */
     ScanResult<String> scan(String cursor, ScanParams params);
 
-    /**
-     * 迭代集合键中的元素。
-     *
-     * @see <a href="http://redisdoc.com/key/scan.html">Key（键） -> sScan</a>
-     * @param key 主键
-     * @param cursor 光标
-     * @param params 排序条件，默认可传null
-     * @return 返回的每个元素都是一个集合成员。
-     */
-    ScanResult<String> sScan(String key, String cursor, ScanParams params);
-
-    /**
-     * 迭代有序集合中的元素（包括元素成员和元素分值）。
-     *
-     * @see <a href="http://redisdoc.com/key/scan.html">Key（键） -> zScan</a>
-     * @param key 主键
-     * @param cursor 光标
-     * @param params 排序条件，默认可传null
-     * @return 返回的每个元素都是一个有序集合元素，一个有序集合元素由一个成员（member）和一个分值（score）组成。
-     */
-    ScanResult<Tuple> zScan(String key, String cursor, ScanParams params);
 }

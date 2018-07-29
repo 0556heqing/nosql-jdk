@@ -379,42 +379,4 @@ public class KeyRedisServiceImpl implements KeyRedisService {
             }
         }
     }
-
-    @Override
-    public ScanResult<String> sScan(String key, String cursor, ScanParams params) {
-        Jedis jedis = null;
-        try {
-            jedis = getJedisPool().getResource();
-            ScanResult<String> result = null;
-            if(params == null) {
-                result = jedis.sscan(key, cursor);
-            } else {
-                result = jedis.sscan(key, cursor, params);
-            }
-            return result;
-        } finally {
-            if(jedis != null) {
-                jedis.close();
-            }
-        }
-    }
-
-    @Override
-    public ScanResult<Tuple> zScan(String key, String cursor, ScanParams params) {
-        Jedis jedis = null;
-        try {
-            jedis = getJedisPool().getResource();
-            ScanResult<Tuple> result = null;
-            if(params == null) {
-                result = jedis.zscan(key, cursor);
-            } else {
-                result = jedis.zscan(key, cursor, params);
-            }
-            return result;
-        } finally {
-            if(jedis != null) {
-                jedis.close();
-            }
-        }
-    }
 }
