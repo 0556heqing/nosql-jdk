@@ -7,8 +7,10 @@ import com.heqing.nosql.redis.service.impl.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.ShardedJedisPool;
+import redis.clients.jedis.Transaction;
 
 /**
  * redis工具类
@@ -25,6 +27,19 @@ public class RedisUtil {
     private static ListRedisService jedisListOperations;
     private static SetRedisService jedisSetOperations;
     private static SortedSetRedisService jedisSortedSetOperations;
+    private static HyperLogLogRedisService hyperLogLogRedisService;
+    private static GeoRedisService geoRedisService;
+
+    /**
+     * 该方法用于获取 Jedis
+     */
+    public static Jedis getJedis() {
+        return getJedisPool().getResource();
+    }
+
+    public static Transaction getTransaction() {
+        return getJedis().multi();
+    }
 
     /**
      * 该方法用于获取 Jedis 线程池
@@ -126,5 +141,25 @@ public class RedisUtil {
             jedisSortedSetOperations = new SortedSetRedisServiceImpl();
         }
         return jedisSortedSetOperations;
+    }
+
+    /**
+     * 该方法用于获取操作 HyperLogLog 的方法集合
+     */
+    public static HyperLogLogRedisService getHyperLogLog() {
+        if (hyperLogLogRedisService == null) {
+            hyperLogLogRedisService = new HyperLogLogRedisServiceImpl();
+        }
+        return hyperLogLogRedisService;
+    }
+
+    /**
+     * 该方法用于获取操作 HyperLogLog 的方法集合
+     */
+    public static GeoRedisService getGeo() {
+        if (geoRedisService == null) {
+            geoRedisService = new GeoRedisServiceImpl();
+        }
+        return geoRedisService;
     }
 }
