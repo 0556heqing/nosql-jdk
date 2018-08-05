@@ -19,7 +19,6 @@ public interface ListRedisService extends KeyRedisService {
      *
      * @see <a href="http://redisdoc.com/list/blpop.html">List（列表） -> blpop</a>
      * @param args 主键名
-     * @param args 多个域名
      * @return 如果列表为空，返回一个 nil 。<br/>
      *         否则，返回一个含有两个元素的列表，第一个元素是被弹出元素所属的 key ，第二个元素是被弹出元素的值。
      */

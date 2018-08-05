@@ -29,7 +29,7 @@ public class SetRedisServiceImpl extends KeyRedisServiceImpl implements SetRedis
     }
 
     @Override
-    public Long sard(String key) {
+    public Long sCard(String key) {
         Jedis jedis = null;
         try {
             jedis = getJedisPool().getResource();

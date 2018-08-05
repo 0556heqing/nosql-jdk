@@ -134,11 +134,14 @@ public class HashMapRedisServiceImplImpl extends KeyRedisServiceImpl implements 
     }
 
     @Override
-    public String hMset(String key, Map<String, String> hash) {
+    public Boolean hMset(String key, Map<String, String> hash) {
         Jedis jedis = null;
         try {
             jedis = getJedisPool().getResource();
-            return jedis.hmset(key, hash);
+            if(OK.equals(jedis.hmset(key, hash))) {
+                return true;
+            }
+            return false;
         } finally {
             if(jedis != null) {
                 jedis.close();

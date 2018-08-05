@@ -129,7 +129,7 @@ public interface HashMapRedisService extends KeyRedisService {
      * @param hash 多个域值
      * @return 如果命令执行成功，返回 OK 。当 key 不是哈希表(hash)类型时，返回一个错误。
      */
-    String hMset(String key, Map<String, String> hash);
+    Boolean hMset(String key, Map<String, String> hash);
 
     /**
      * 将哈希表 key 中的域 field 的值设置为 value ，当且仅当域 field 不存在。<br/>

@@ -71,6 +71,7 @@ public interface KeyRedisService {
     /**
      * EXPIREAT 的作用和 EXPIRE 类似，都用于为 key 设置生存时间。<br/>
      * 不同在于 EXPIREAT 命令接受的时间参数是 UNIX 时间戳(unix timestamp)。
+     * 注：java获取UNIX时间戳为：System.currentTimeMillis()/ 1000
      *
      * @see <a href="http://redisdoc.com/key/expireat.html">Key（键） -> expireat</a>
      * @param key 主键名
@@ -95,6 +96,7 @@ public interface KeyRedisService {
     Set<String> keys(String pattern);
 
     /**
+     * 注：此方法未测试成功，不能保证正确性
      * 将 key 原子性地从当前实例传送到目标实例的指定数据库上，一旦传送成功， key 保证会出现在目标实例上，而当前实例上的 key 会被删除。<br/>
      * 这个命令是一个原子操作，它在执行的时候会阻塞进行迁移的两个实例，直到以下任意结果发生：迁移成功，迁移失败，等到超时。<br/>
      * 命令的内部实现是这样的：它在当前实例对给定 key 执行 DUMP 命令 ，将它序列化，然后传送到目标实例，目标实例再使用 RESTORE 对数据进行反序列化，
@@ -119,7 +121,7 @@ public interface KeyRedisService {
      * @param port 端口号
      * @param key 主键名
      * @param destinationDb 数据库下标
-     * @param timeout 超时时间
+     * @param timeout 超时时间（毫秒）
      * @return 移动成功返回 true ，失败则返回 false 。
      */
     Boolean migrate(String host, int port, String key, int destinationDb, int timeout);
@@ -163,7 +165,7 @@ public interface KeyRedisService {
     Long objectIdletime(String key);
 
     /**
-     * 返回给定 key 引用所储存的值的次数。此命令主要用于除错<br/>
+     * 返回给定 key 引用所储存的值的次数。此命令主要用于除错
      *
      * @see <a href="http://redisdoc.com/key/object.html">Key（键） -> objectRefcount</a>
      * @param key 主键名
@@ -256,7 +258,9 @@ public interface KeyRedisService {
     Boolean restore(String key, int ttl, String value);
 
     /**
-     * 对、数据结构为 列表、集合、有序集合 的key进行排序。排序默认以数字作为对象，值被解释为双精度浮点数，然后进行比较。
+     * 对数据结构为 列表、集合、有序集合 的key进行排序。<br/>
+     * 排序默认以数字作为对象，值被解释为双精度浮点数，然后进行比较。<br/>
+     * 注：key的类型为：列表/集合时，其中值必要能转换成double类型，否则会报错
      *
      * @see <a href="http://redisdoc.com/key/sort.html">Key（键） -> sort</a>
      * @param key 主键名
@@ -270,8 +274,8 @@ public interface KeyRedisService {
      *
      * @see <a href="http://redisdoc.com/key/ttl.html">Key（键） -> ttl</a>
      * @param key 旧主键名
-     * @return 当 key 不存在时，返回 -2 。
-     *         当 key 存在但没有设置剩余生存时间时，返回 -1 。
+     * @return 当 key 不存在时，返回 -2 。<br/>
+     *         当 key 存在但没有设置剩余生存时间时，返回 -1 。<br/>
      *         否则，以秒为单位，返回 key 的剩余生存时间。
      */
     Long ttl(String key);

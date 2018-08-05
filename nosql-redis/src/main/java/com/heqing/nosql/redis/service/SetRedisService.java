@@ -33,7 +33,7 @@ public interface SetRedisService {
      * @param key 主键名
      * @return 集合的基数。当 key 不存在时，返回 0 。
      */
-    Long sard(String key);
+    Long sCard(String key);
 
     /**
      * 返回一个集合的全部成员，该集合是所有给定集合之间的差集。<br/>

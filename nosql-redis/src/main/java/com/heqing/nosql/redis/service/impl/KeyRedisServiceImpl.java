@@ -3,6 +3,7 @@ package com.heqing.nosql.redis.service.impl;
 import com.heqing.nosql.redis.manager.RedisManager;
 import com.heqing.nosql.redis.service.KeyRedisService;
 import redis.clients.jedis.*;
+import redis.clients.jedis.exceptions.JedisDataException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,11 @@ public class KeyRedisServiceImpl implements KeyRedisService {
         Jedis jedis = null;
         try {
             jedis = getJedisPool().getResource();
-            return new String(jedis.dump(key));
+            byte[] result = jedis.dump(key);
+            if(result != null && result.length > 0) {
+                return new String(result);
+            }
+            return "";
         } finally {
             if(jedis != null) {
                 jedis.close();
@@ -284,19 +289,22 @@ public class KeyRedisServiceImpl implements KeyRedisService {
 
     @Override
     public Boolean renameNx(String oldkey, String newkey) {
+        Boolean isSuccess = false;
         Jedis jedis = null;
         try {
             jedis = getJedisPool().getResource();
             Long result = jedis.renamenx(oldkey, newkey);
             if(1L == result) {
-                return true;
+                isSuccess = true;
             }
-            return false;
+        } catch (JedisDataException e) {
+            System.out.println("warn --> "+oldkey+" = "+e.getMessage());
         } finally {
             if(jedis != null) {
                 jedis.close();
             }
         }
+        return isSuccess;
     }
 
     @Override
@@ -321,7 +329,7 @@ public class KeyRedisServiceImpl implements KeyRedisService {
         Jedis jedis = null;
         try {
             jedis = getJedisPool().getResource();
-            List<String> result = new ArrayList<>();
+            List<String> result;
             if(sortingParams == null) {
                 result = jedis.sort(key);
             } else {
