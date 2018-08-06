@@ -11,6 +11,7 @@ public class TestSubscribe {
 
     @Test
     public void testSubscribe() throws Exception {
+        
         RedisMsgPubSubListener listener = new RedisMsgPubSubListener();
         RedisUtil.getJedis().subscribe(listener, "redisChatTest");
     }
