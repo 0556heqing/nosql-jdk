@@ -11,7 +11,9 @@ public class TestPublish {
 
     @Test
     public void testPublish() throws Exception {
-        RedisUtil.getJedis().publish("redisChatTest", "test");
+        RedisUtil.getJedis().publish("testChannel", "heqing");
+
+        RedisUtil.getJedis().publish("test.share", "heqing");
     }
 
 }

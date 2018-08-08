@@ -9,10 +9,17 @@ import org.junit.Test;
  */
 public class TestSubscribe {
 
+    RedisMsgPubSubListener listener = new RedisMsgPubSubListener();
+
     @Test
     public void testSubscribe() throws Exception {
-        
-        RedisMsgPubSubListener listener = new RedisMsgPubSubListener();
-        RedisUtil.getJedis().subscribe(listener, "redisChatTest");
+//        RedisUtil.getJedis().subscribe(listener, "testChannel");
+
+        RedisUtil.getJedis().subscribe(listener, "test.share", "test.log");
+    }
+
+    @Test
+    public void testpSubscribe() throws Exception {
+        RedisUtil.getJedis().psubscribe(listener, "test.*");
     }
  }

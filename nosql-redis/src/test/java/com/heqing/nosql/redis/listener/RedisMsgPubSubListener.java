@@ -10,111 +10,73 @@ import redis.clients.jedis.JedisPubSub;
 public class RedisMsgPubSubListener extends JedisPubSub {
 
     /**
-     * 退订所有订阅的频道
-     * @see <a href="http://redisdoc.com/pub_sub/unsubscribe.html">Pub/Sub -> unsubscribe</a>
-     */
-    @Override
-    public void unsubscribe() {
-        System.out.println("unsubscribe --->");
-        super.unsubscribe();
-    }
-
-    /**
-     * 退订给定的频道
-     * @see <a href="http://redisdoc.com/pub_sub/unsubscribe.html">Pub/Sub -> unsubscribe</a>
-     * @param channels 一个或多个频道
-     */
-    @Override
-    public void unsubscribe(String... channels) {
-        System.out.println("unsubscribe ---> channel:" + channels);
-        super.unsubscribe(channels);
-    }
-
-    /**
-     * 订阅给定的频道
+     * 初始化订阅时候的处理
      * @see <a href="http://redisdoc.com/pub_sub/subscribe.html">Pub/Sub -> subscribe</a>
-     * @param channels 一个或多个频道
-     */
-    @Override
-    public void subscribe(String... channels) {
-        System.out.println("subscribe ---> channel:" + channels);
-        super.subscribe(channels);
-    }
-
-    @Override
-    public void punsubscribe() {
-        System.out.println("punsubscribe");
-        super.punsubscribe();
-    }
-
-    /**
-     * 订阅一个或多个符合给定模式的频道
-     * @see <a href="http://redisdoc.com/pub_sub/psubscribe.html">Pub/Sub -> psubscribe</a>
-     * @param patterns 匹配符。每个模式以 * 作为匹配符，比如 it* 匹配所有以 it 开头的频道( it.news 、 it.blog 、 it.tweets 等等)，
-     *                news.* 匹配所有以 news. 开头的频道( news.it 、 news.global.today 等等)，诸如此类。
-     */
-    @Override
-    public void psubscribe(String... patterns) {
-        System.out.println("psubscribe ---> patterns:" + patterns);
-        super.psubscribe(patterns);
-    }
-
-    /**
-     * 退订阅一个或多个符合给定模式的频道
-     * @see <a href="http://redisdoc.com/pub_sub/psubscribe.html">Pub/Sub -> psubscribe</a>
-     * @param patterns 匹配符。每个模式以 * 作为匹配符，比如 it* 匹配所有以 it 开头的频道( it.news 、 it.blog 、 it.tweets 等等)，
-     *                news.* 匹配所有以 news. 开头的频道( news.it 、 news.global.today 等等)，诸如此类。
-     */
-    @Override
-    public void punsubscribe(String... patterns) {
-        System.out.println("punsubscribe ---> patterns:" + patterns);
-        super.punsubscribe(patterns);
-    }
-
-    /**
-     * 接收到的消息
-     * @param channel 频道
-     * @param message 消息内容
-     */
-    @Override
-    public void onMessage(String channel, String message) {
-        System.out.println("onMessage ---> channel:" + channel + "receives message :" + message);
-        this.unsubscribe();
-    }
-
-    @Override
-    public void onPMessage(String pattern, String channel, String message) {
-        System.out.println("onPMessage ---> pattern:" + pattern + ", channel:" + channel+", message:"+message);
-    }
-
-    /**
-     * 开始订阅时收到的消息
      * @param channel 频道
      * @param subscribedChannels 订阅
      */
     @Override
     public void onSubscribe(String channel, int subscribedChannels) {
-        System.out.println("onSubscribe ---> channel:" + channel + ", subscribedChannels:" + subscribedChannels);
-    }
-
-    @Override
-    public void onPUnsubscribe(String pattern, int subscribedChannels) {
-        System.out.println("onPUnsubscribe ---> pattern:" + pattern + ", subscribedChannels:" + subscribedChannels);
-    }
-
-    @Override
-    public void onPSubscribe(String pattern, int subscribedChannels) {
-        System.out.println("onPSubscribe ---> pattern:" + pattern + ", subscribedChannels:" + subscribedChannels);
+        System.out.println("开始订阅 ---> 频道:" + channel + ", 订阅频道:" + subscribedChannels);
     }
 
     /**
-     * 取消订阅时收到的消息
+     * 初始化按表达式的方式订阅时候的处理
+     * @see <a href="http://redisdoc.com/pub_sub/psubscribe.html">Pub/Sub -> psubscribe</a>
+     * @param pattern 表达式匹配符。每个模式以 * 作为匹配符，比如 it* 匹配所有以 it 开头的频道( it.news 、 it.blog 、 it.tweets 等等)，
+     *                news.* 匹配所有以 news. 开头的频道( news.it 、 news.global.today 等等)，诸如此类。
+     * @param subscribedChannels 订阅
+     */
+    @Override
+    public void onPSubscribe(String pattern, int subscribedChannels) {
+        System.out.println("开始订阅 ---> 表达式:" + pattern + ", 订阅频道:" + subscribedChannels);
+    }
+
+    /**
+     * 收到订阅消息后的处理
+     * @param channel 频道
+     * @param message 消息内容
+     */
+    @Override
+    public void onMessage(String channel, String message) {
+        System.out.println("订阅消息 ---> 频道:" + channel + ", 接收到的消息:" + message);
+        if("end".equals(message)) {
+            unsubscribe(channel);
+        }
+    }
+
+    /**
+     * 收到按表达式的方式订阅消息后的处理
+     * @param pattern 表达式匹配符。每个模式以 * 作为匹配符，比如 it* 匹配所有以 it 开头的频道( it.news 、 it.blog 、 it.tweets 等等)，
+     *                news.* 匹配所有以 news. 开头的频道( news.it 、 news.global.today 等等)，诸如此类。
+     * @param channel 频道
+     * @param message 消息内容
+     */
+    @Override
+    public void onPMessage(String pattern, String channel, String message) {
+        System.out.println("按表达式的方式订阅消息 ---> 表达式:" + pattern + ", 频道:" + channel+", 接收到的消息:"+message);
+    }
+
+    /**
+     * 取消订阅时候的处理
+     * @see <a href="http://redisdoc.com/pub_sub/unsubscribe.html">Pub/Sub -> unsubscribe</a>
      * @param channel 频道
      * @param subscribedChannels 订阅
      */
     @Override
     public void onUnsubscribe(String channel, int subscribedChannels) {
-        System.out.println("onUnsubscribe ---> channel:" + channel + ", subscribedChannels" + subscribedChannels);
+        System.out.println("取消订阅 ---> 频道:" + channel + ", 订阅频道:" + subscribedChannels);
     }
 
+    /**
+     * 取消按表达式的方式订阅时候的处理
+     * @see <a href="http://redisdoc.com/pub_sub/punsubscribe.html">Pub/Sub -> punsubscribe</a>
+     * @param pattern 表达式匹配符。每个模式以 * 作为匹配符，比如 it* 匹配所有以 it 开头的频道( it.news 、 it.blog 、 it.tweets 等等)，
+     *                news.* 匹配所有以 news. 开头的频道( news.it 、 news.global.today 等等)，诸如此类。
+     * @param subscribedChannels 订阅
+     */
+    @Override
+    public void onPUnsubscribe(String pattern, int subscribedChannels) {
+        System.out.println("取消订阅 ---> 表达式:" + pattern + ", 订阅频道:" + subscribedChannels);
+    }
 }
