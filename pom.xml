@@ -6,14 +6,15 @@
 	<groupId>com.heqing.nosql</groupId>
 	<artifactId>nosql-jdk</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 	<name>nosql-jdk</name>
 	<description>NoSql Java Development Kit</description>
 
 	<modules>
 		<module>nosql-redis</module>
-	</modules>
+        <module>nosql-mongodb</module>
+    </modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
