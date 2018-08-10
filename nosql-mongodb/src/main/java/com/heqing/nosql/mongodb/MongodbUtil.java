@@ -18,10 +18,10 @@ import com.mongodb.MongoClient;
 public class MongodbUtil {
 
     private static MongoClient mongoClient;
-    private static DataBaseService dataBaseOperations;
-    private static CollectionService collectionOperations;
-    private static DocumentService documentOperations;
-    private static FileService fileOperations;
+    private static DataBaseService dataBaseService;
+    private static CollectionService collectionService;
+    private static DocumentService documentService;
+    private static FileService fileService;
 
     public static MongoClient getMongoClient() {
         if(mongoClient == null) {
@@ -40,40 +40,40 @@ public class MongodbUtil {
      * 该方法用于获取操作库的方法集合
      */
     public static DataBaseService getDataBase() {
-        if(dataBaseOperations == null) {
-            dataBaseOperations = new DataBaseServiceImpl();
+        if(dataBaseService == null) {
+            dataBaseService = new DataBaseServiceImpl();
         }
-        return dataBaseOperations;
+        return dataBaseService;
     }
 
     /**
      * 该方法用于获取操作集合的方法集合
      */
     public static CollectionService getCollection() {
-        if(collectionOperations == null) {
-            collectionOperations = new CollectionServiceImpl();
+        if(collectionService == null) {
+            collectionService = new CollectionServiceImpl();
         }
-        return collectionOperations;
+        return collectionService;
     }
 
     /**
      * 该方法用于获取操作文档的方法集合
      */
     public static DocumentService getDocument() {
-        if(documentOperations == null) {
-            documentOperations = new DocumentServiceImpl();
+        if(documentService == null) {
+            documentService = new DocumentServiceImpl();
         }
-        return documentOperations;
+        return documentService;
     }
 
     /**
      * 该方法用于获取操作文件的方法集合
      */
-    public static FileService getFile(String dbName) {
-        if(fileOperations == null) {
-            fileOperations = new FileServiceImpl(dbName);
+    public static FileService getFile() {
+        if(fileService == null) {
+            fileService = new FileServiceImpl();
         }
-        return fileOperations;
+        return fileService;
     }
 
 }

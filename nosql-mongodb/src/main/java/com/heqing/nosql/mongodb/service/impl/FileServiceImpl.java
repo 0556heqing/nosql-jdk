@@ -6,9 +6,11 @@ import com.mongodb.DBObject;
 import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
+import org.bson.types.ObjectId;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Date;
 
 /**
  * @author heqing
@@ -16,36 +18,13 @@ import java.io.FileOutputStream;
  */
 public class FileServiceImpl extends DataBaseServiceImpl implements FileService {
 
-    GridFS gridFS = null;
-
-    public FileServiceImpl(String dbName) {
-        if(gridFS == null) {
-            gridFS = new GridFS(getMongoClient().getDB(dbName));
-        }
-    }
-
-
     @Override
-    public GridFSDBFile getFileById(Object id) {
-        DBObject query  = new BasicDBObject("_id", id);
-        GridFSDBFile gridFSDBFile = gridFS.findOne(query);
-        return gridFSDBFile;
+    public boolean createFile(String dbName, File file) {
+        return createFile(dbName, file.getParent(), file.getName());
     }
 
     @Override
-    public GridFSDBFile getFileByName(String fileName) {
-        DBObject query  = new BasicDBObject("filename", fileName);
-        GridFSDBFile gridFSDBFile = gridFS.findOne(query);
-        return gridFSDBFile;
-    }
-
-    @Override
-    public boolean write(File file) {
-        return write(file.getAbsolutePath(), file.getName());
-    }
-
-    @Override
-    public boolean write(String filePath, String fileName) {
+    public boolean createFile(String dbName, String filePath, String fileName) {
         File file =new File(filePath+"/"+fileName);
         if(!file.exists()) {
             return false;
@@ -53,6 +32,7 @@ public class FileServiceImpl extends DataBaseServiceImpl implements FileService 
         try {
             Object id = System.currentTimeMillis();
             DBObject query  = new BasicDBObject("_id", id);
+            GridFS gridFS = getGridFS(dbName);
             GridFSDBFile gridFSDBFile = gridFS.findOne(query);
             if(gridFSDBFile == null){
                 GridFSInputFile gridFSInputFile = gridFS.createFile(file);
@@ -68,16 +48,29 @@ public class FileServiceImpl extends DataBaseServiceImpl implements FileService 
     }
 
     @Override
-    public boolean read(String filePath, String fileName) {
-        GridFSDBFile gridFSDBFile = getFileByName(fileName);
-        if(gridFSDBFile == null) {
-            return false;
-        }
-        return read(gridFSDBFile, filePath, fileName);
+    public void deleteByFileId(String dbName, Long id) {
+        GridFS gridFS = getGridFS(dbName);
+        DBObject query  = new BasicDBObject("_id", id);
+        gridFS.remove(query);
     }
 
     @Override
-    public boolean read(GridFSDBFile gridFSDBFile, String filePath, String fileName) {
+    public void deleteFileByName(String dbName, String fileName) {
+        GridFS gridFS = getGridFS(dbName);
+        gridFS.remove(fileName);
+    }
+
+    @Override
+    public boolean getFile(String dbName, String filePath, String fileName) {
+        GridFSDBFile gridFSDBFile = getGridFileByName(dbName, fileName);
+        if(gridFSDBFile == null) {
+            return false;
+        }
+        return getFile(gridFSDBFile, filePath, fileName);
+    }
+
+    @Override
+    public boolean getFile(GridFSDBFile gridFSDBFile, String filePath, String fileName) {
         if(gridFSDBFile != null){
             try {
                 gridFSDBFile.writeTo(new FileOutputStream(filePath+"/"+fileName));
@@ -91,12 +84,23 @@ public class FileServiceImpl extends DataBaseServiceImpl implements FileService 
     }
 
     @Override
-    public void deleteByFileId(String id) {
-        gridFS.remove(id);
+    public GridFS getGridFS(String dbName) {
+        GridFS gridFS = new GridFS(getMongoClient().getDB(dbName));
+        return gridFS;
     }
 
     @Override
-    public void deleteByFileName(String fileName) {
-        gridFS.remove(fileName);
+    public GridFSDBFile getGridFileById(String dbName, Long id) {
+        DBObject query  = new BasicDBObject("_id", id);
+        GridFSDBFile gridFSDBFile = getGridFS(dbName).findOne(query);
+        return gridFSDBFile;
     }
+
+    @Override
+    public GridFSDBFile getGridFileByName(String dbName, String fileName) {
+        DBObject query  = new BasicDBObject("filename", fileName);
+        GridFSDBFile gridFSDBFile = getGridFS(dbName).findOne(query);
+        return gridFSDBFile;
+    }
+
 }
