@@ -103,6 +103,26 @@ public class DocumentServiceImpl extends CollectionServiceImpl implements Docume
     }
 
     @Override
+    public long getDocumentCount(String dbName, String collName) {
+        return getDocumentCount(getCollectionByName(dbName, collName));
+    }
+
+    @Override
+    public long getDocumentCount(MongoCollection<Document> coll) {
+        return coll.countDocuments();
+    }
+
+    @Override
+    public long getDocumentCountByParam(String dbName, String collName, Bson param) {
+        return getDocumentCountByParam(getCollectionByName(dbName, collName), param);
+    }
+
+    @Override
+    public long getDocumentCountByParam(MongoCollection<Document> coll, Bson param) {
+        return coll.countDocuments(param);
+    }
+
+    @Override
     public List<Document> getDocumentListByParam(String dbName, String collName, Bson param) {
         return getDocumentListByParam(getCollectionByName(dbName, collName), param);
     }

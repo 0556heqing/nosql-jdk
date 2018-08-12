@@ -1,13 +1,9 @@
 package com.heqing.nosql.mongodb;
 
-import com.heqing.nosql.mongodb.constant.Comparison;
-import com.heqing.nosql.mongodb.constant.ComparisonDigital;
-import com.heqing.nosql.mongodb.constant.Order;
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Filters;
 import org.bson.conversions.Bson;
 
-import java.util.regex.Pattern;
+import java.util.List;
 
 /**
  * @author heqing
@@ -16,73 +12,163 @@ import java.util.regex.Pattern;
 public class QueryUtil {
 
     /**
-     * 该方法用于生成查询条件
+     * 等于
      * @param field 字段名
-     * @param order 正序/倒序
+     * @param value 值
      * @return 查询条件
      */
-    public static Bson order(String field, Order order) {
-        Bson bson = null;
-        switch(order) {
-            case asc : bson = Filters.eq(field, 1); break;
-            case desc : bson = Filters.eq(field, -1); break;
-            default: break;
-        }
-        return bson;
+    public static Bson eq(String field, Object value) {
+        return Filters.eq(field, value);
     }
 
     /**
-     * 该方法用于生成比较数组条件
+     * 不等于
      * @param field 字段名
-     * @param value 比较值
-     * @param condition 比较条件
+     * @param value 值
      * @return 查询条件
      */
-    public static Bson comparisonDigital(String field, Double value, ComparisonDigital condition) {
-        Bson bson = null;
-        switch(condition) {
-            case lt : bson = Filters.lt(field, value); break;
-            case lte : bson = Filters.lte(field, value); break;
-            case gt : bson = Filters.gt(field, value); break;
-            case gte : bson = Filters.gte(field, value); break;
-            case eq : bson = Filters.eq(field, value); break;
-            case ne : bson = Filters.ne(field, value); break;
-            default: break;
-        }
-        return bson;
+    public static Bson ne(String field, Object value) {
+        return Filters.ne(field, value);
     }
 
     /**
-     * 该方法用于生成比较字符条件
+     * 小于
      * @param field 字段名
-     * @param value 比较值
-     * @param condition 比较条件
+     * @param value 值
      * @return 查询条件
      */
-    public static Bson comparison(String field, String value, Comparison condition) {
-        Bson bson = null;
-        Pattern pattern = null;
-        BasicDBObject query = new BasicDBObject();
-        switch(condition) {
-            case eq : bson = Filters.eq(field, value); break;
-            case ne : bson = Filters.ne(field, value); break;
-            case start :
-                pattern = Pattern.compile("^"+value+".*$", Pattern.CASE_INSENSITIVE);
-                query.put(field, pattern);
-                bson = query;
-                break;
-            case like :
-                pattern = Pattern.compile("^.*"+value+".*$", Pattern.CASE_INSENSITIVE);
-                query.put(field, pattern);
-                bson = query;
-                break;
-            case end :
-                pattern = Pattern.compile("^.*"+value+"$", Pattern.CASE_INSENSITIVE);
-                query.put(field, pattern);
-                bson = query;
-                break;
-            default: break;
-        }
-        return bson;
+    public static Bson lt(String field, Double value) {
+        return Filters.lt(field, value);
+    }
+
+    /**
+     * 小于或等于
+     * @param field 字段名
+     * @param value 值
+     * @return 查询条件
+     */
+    public static Bson lte(String field, Double value) {
+        return Filters.lte(field, value);
+    }
+
+    /**
+     * 大于
+     * @param field 字段名
+     * @param value 值
+     * @return 查询条件
+     */
+    public static Bson gt(String field, Double value) {
+        return Filters.gt(field, value);
+    }
+
+    /**
+     * 大于或等于
+     * @param field 字段名
+     * @param value 值
+     * @return 查询条件
+     */
+    public static Bson gte(String field, Double value) {
+        return Filters.gte(field, value);
+    }
+
+    /**
+     * 包含
+     * @param field 字段名
+     * @param value 值
+     * @return 查询条件
+     */
+    public static Bson like(String field, String value) {
+        return Filters.regex(field, "^.*"+value+".*$");
+    }
+
+    /**
+     * 以某某开头
+     * @param field 字段名
+     * @param value 值
+     * @return 查询条件
+     */
+    public static Bson startsWith(String field, String value) {
+        return Filters.regex(field, "^"+value+".*$");
+    }
+
+    /**
+     * 以某某结尾
+     * @param field 字段名
+     * @param value 值
+     * @return 查询条件
+     */
+    public static Bson endsWith(String field, String value) {
+        return Filters.regex(field, "^.*"+value+"$");
+    }
+
+    /**
+     * 以字段名正序排列
+     * @param field 字段名
+     * @return 查询条件
+     */
+    public static Bson asc(String field) {
+        return Filters.eq(field, 1);
+    }
+
+    /**
+     * 以字段名倒序排列
+     * @param field 字段名
+     * @return 查询条件
+     */
+    public static Bson desc(String field) {
+        return Filters.eq(field, -1);
+    }
+
+    /**
+     * 在 startValue 和 endValue 之内的数，包括startValue/endValue
+     * @param field 字段名
+     * @param startValue 开始值
+     * @param endValue 结束值
+     * @return 查询条件
+     */
+    public static Bson between(String field, Double startValue, Double endValue) {
+        Bson start = Filters.lte(field, startValue);
+        Bson end = Filters.gte(field, endValue);
+        return Filters.and(start, end);
+    }
+
+    /**
+     * field 中存在 value 中的值
+     * @param field 字段名
+     * @param value 值
+     * @return 查询条件
+     */
+    public static Bson in(String field, Object value) {
+        return Filters.in(field, value);
+    }
+
+    /**
+     * field 中存在 valueList 中的值
+     * @param field 字段名
+     * @param valueList 值列表
+     * @return 查询条件
+     */
+    public static Bson in(String field, List<Object> valueList) {
+        return Filters.in(field, valueList);
+    }
+
+    /**
+     * field 中不存在 valueList 中的值
+     * @param field 字段名
+     * @param value 值
+     * @return 查询条件
+     */
+    public static Bson nin(String field, Object value) {
+        return Filters.nin(field, value);
+    }
+
+    /**
+     * field 中不存在 valueList 中的值
+     * @param field 字段名
+     * @param valueList 值列表
+     * @return 查询条件
+     */
+    public static Bson nin(String field, List<Object> valueList) {
+        return Filters.in(field, valueList);
     }
 }

@@ -110,6 +110,38 @@ public interface DocumentService extends CollectionService {
     List<Document> getAllDocumentList(MongoCollection<Document> coll);
 
     /**
+     * 获取文档数量
+     * @param dbName 库名
+     * @param collName 集合名
+     * @return 查找到文档
+     */
+    long getDocumentCount(String dbName, String collName);
+
+    /**
+     * 获取文档数量
+     * @param coll 集合文档
+     * @return 查找到文档
+     */
+    long getDocumentCount(MongoCollection<Document> coll);
+
+    /**
+     * 根据条件获取文档数量
+     * @param dbName 库名
+     * @param collName 集合名
+     * @param param	查询条件
+     * @return 查找到文档
+     */
+    long getDocumentCountByParam(String dbName, String collName, Bson param);
+
+    /**
+     * 根据条件获取文档数量
+     * @param coll 集合文档
+     * @param param	查询条件
+     * @return 查找到文档
+     */
+    long getDocumentCountByParam(MongoCollection<Document> coll, Bson param);
+
+    /**
      * 根据条件查找文档
      * @param dbName 库名
      * @param collName 集合名
