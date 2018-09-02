@@ -17,24 +17,17 @@ import com.mongodb.MongoClient;
  */
 public class MongodbUtil {
 
-    private static MongoClient mongoClient;
     private static DataBaseService dataBaseService;
     private static CollectionService collectionService;
     private static DocumentService documentService;
     private static FileService fileService;
 
     public static MongoClient getMongoClient() {
-        if(mongoClient == null) {
-            mongoClient = MongodbManager.mongoClient;
-        }
-        return mongoClient;
+        return MongodbManager.getMongoClient();
     }
 
     public static void closeClient() {
-        if (mongoClient != null) {
-            mongoClient.close();
-            mongoClient = null;
-        }
+        MongodbManager.closeClient();
     }
     /**
      * 该方法用于获取操作库的方法集合

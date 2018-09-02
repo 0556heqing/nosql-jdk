@@ -20,23 +20,33 @@ public class ShardedJedisManager extends  BaseManager {
 
     public ShardedJedisManager() { }
 
-    static {
-        try {
-            List<JedisShardInfo> jdsInfoList =new ArrayList<JedisShardInfo>();
-            JedisShardInfo infoA = new JedisShardInfo(redisIp, redisPort);
-            jdsInfoList.add(infoA);
-            // 有密码加入AUTH
-            if("".equals(redisPassword)) {
-                infoA.setPassword(redisPassword);
-            }
-            shardedJedisPool = new ShardedJedisPool(poolConfig, jdsInfoList);
-
-        } catch (Exception e) {
-            logger.error("初始化 ShardedJedis 服务器失败>>>" + e.getMessage(), e);
-        }
-    }
-
     public static ShardedJedisPool getShardedJedisPool() {
+        if (shardedJedisPool == null) {
+            try {
+                List<JedisShardInfo> jdsInfoList = new ArrayList<>();
+
+                // 数据库地址端口
+                String delimiter = ", *";
+                for (String hostport : address.split(delimiter)) {
+                    if (hostport == null || "".equals(hostport)) {
+                        continue;
+                    }
+                    String[] addr = hostport.trim().split(":");
+                    if(addr.length == 2) {
+                        JedisShardInfo info = new JedisShardInfo(addr[0], addr[1]);
+                        // 有密码加入AUTH
+                        if (!"".equals(password)) {
+                            info.setPassword(password);
+                        }
+                        jdsInfoList.add(info);
+                    }
+                }
+                shardedJedisPool = new ShardedJedisPool(poolConfig, jdsInfoList);
+
+            } catch (Exception e) {
+                logger.error("初始化 ShardedJedis 服务器失败>>>" + e.getMessage(), e);
+            }
+        }
         return shardedJedisPool;
     }
 

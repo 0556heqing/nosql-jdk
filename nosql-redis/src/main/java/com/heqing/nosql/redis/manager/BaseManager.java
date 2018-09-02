@@ -14,16 +14,19 @@ public abstract class BaseManager {
     protected static JedisPoolConfig poolConfig = new JedisPoolConfig();
 
     /** 服务器IP */
-    protected static String redisIp = "";
+    protected static String ip = "";
 
     /** 端口号 */
-    protected static Integer redisPort = 0;
+    protected static Integer port = 0;
+
+    /** 分布式配置多个地址填写，多个之间是用,号分隔 */
+    protected static String address = "";
 
     /** 访问密码 */
-    protected static String redisPassword = "";
+    protected static String password = "";
 
     /** 数据库下标 */
-    protected static Integer redisDb_index = 0;
+    protected static Integer dbIndex = 0;
 
     /**
      * 可用连接实例的最大数目，默认值为8；如果赋值为-1，则表示不限制；<br/>
@@ -57,17 +60,18 @@ public abstract class BaseManager {
     static {
         ResourceBundle budleEnv = ResourceBundle.getBundle("redis_config");
 
-        redisIp = budleEnv.getString("redisIp");
-        redisPort = Integer.parseInt(budleEnv.getString("redisPort"));
-        redisPassword = budleEnv.getString("redisPassword");
-        redisDb_index = Integer.parseInt(budleEnv.getString("redisDb_index"));
-        maxMotal = Integer.parseInt(budleEnv.getString("maxMotal"));
-        maxWait = Long.parseLong(budleEnv.getString("maxWait"));
-        maxIdle = Integer.parseInt(budleEnv.getString("maxIdle"));
-        minIdle = Integer.parseInt(budleEnv.getString("minIdle"));
-        timeOut = Integer.parseInt(budleEnv.getString("timeOut"));
-        minEvictableIdle = Long.parseLong(budleEnv.getString("minEvictableIdle"));
-        timeBetweenEvictionRuns = Long.parseLong(budleEnv.getString("timeBetweenEvictionRuns"));
+        ip = budleEnv.getString("redis.ip");
+        port = Integer.parseInt(budleEnv.getString("redis.port"));
+        password = budleEnv.getString("redis.password");
+        address = budleEnv.getString("redis.address");
+        dbIndex = Integer.parseInt(budleEnv.getString("redis.db_index"));
+        maxMotal = Integer.parseInt(budleEnv.getString("redis.max_motal"));
+        maxWait = Long.parseLong(budleEnv.getString("redis.max_wait"));
+        maxIdle = Integer.parseInt(budleEnv.getString("redis.max_idle"));
+        minIdle = Integer.parseInt(budleEnv.getString("redis.min_idle"));
+        timeOut = Integer.parseInt(budleEnv.getString("redis.time_out"));
+        minEvictableIdle = Long.parseLong(budleEnv.getString("redis.min_evictable_idle"));
+        timeBetweenEvictionRuns = Long.parseLong(budleEnv.getString("redis.time_between_eviction_runs"));
 
         poolConfig.setMaxTotal(maxMotal);
         poolConfig.setMinIdle(minIdle);

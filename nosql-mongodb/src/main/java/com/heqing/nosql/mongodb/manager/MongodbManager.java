@@ -21,8 +21,10 @@ public class MongodbManager {
 
     public static MongoClient mongoClient = null;
 
+    protected static MongoClientOptions.Builder build = new MongoClientOptions.Builder();
+
     /** 服务器IP和端口 */
-    protected static String mongodbAddress = "";
+    protected static String address = "";
 
     /** 数据库名 */
     protected static String databaseName = "";
@@ -49,54 +51,64 @@ public class MongodbManager {
     protected static int allowedToBlockForConnection = 5000;
 
     static {
-        try {
-            ResourceBundle budleEnv = ResourceBundle.getBundle("mongodb_config");
+        ResourceBundle budleEnv = ResourceBundle.getBundle("mongodb_config");
 
-            mongodbAddress = budleEnv.getString("mongodbAddress");
-            databaseName = budleEnv.getString("databaseName");
-            userName = budleEnv.getString("userName");
-            password = budleEnv.getString("password");
-            perHost = Integer.parseInt(budleEnv.getString("perHost"));
-            timeout = Integer.parseInt(budleEnv.getString("timeout"));
-            maxWaitTime = Integer.parseInt(budleEnv.getString("maxWaitTime"));
-            socketTimeout = Integer.parseInt(budleEnv.getString("socketTimeout"));
-            allowedToBlockForConnection = Integer.parseInt(budleEnv.getString("allowedToBlockForConnection"));
+        address = budleEnv.getString("mongodb.address");
+        databaseName = budleEnv.getString("mongodb.db_name");
+        userName = budleEnv.getString("mongodb.user_name");
+        password = budleEnv.getString("mongodb.password");
+        perHost = Integer.parseInt(budleEnv.getString("mongodb.per_host"));
+        timeout = Integer.parseInt(budleEnv.getString("mongodb.time_out"));
+        maxWaitTime = Integer.parseInt(budleEnv.getString("mongodb.max_wait_time"));
+        socketTimeout = Integer.parseInt(budleEnv.getString("mongodb.socket_time_out"));
+        allowedToBlockForConnection = Integer.parseInt(budleEnv.getString("mongodb.allowed_to_block_for_connection"));
 
-            // mongo系统参数
-            MongoClientOptions.Builder build = new MongoClientOptions.Builder();
-            build.connectionsPerHost(perHost);
-            build.connectTimeout(timeout);
-            build.maxWaitTime(maxWaitTime);
-            build.socketTimeout(socketTimeout);
-            build.threadsAllowedToBlockForConnectionMultiplier(allowedToBlockForConnection);
-            MongoClientOptions options = build.build();
+        // mongo系统参数
+        build.connectionsPerHost(perHost);
+        build.connectTimeout(timeout);
+        build.maxWaitTime(maxWaitTime);
+        build.socketTimeout(socketTimeout);
+        build.threadsAllowedToBlockForConnectionMultiplier(allowedToBlockForConnection);
+    }
 
-            // 数据库地址端口
-            List<ServerAddress> addrList = new ArrayList<>();
-            String delimiter = ", *";
-            for (String hostport : mongodbAddress.split(delimiter)) {
-                if (hostport == null || "".equals(hostport)) {
-                    continue;
+    public static MongoClient getMongoClient() {
+        if (mongoClient == null) {
+            try {
+                MongoClientOptions options = build.build();
+                // 数据库地址端口
+                List<ServerAddress> addrList = new ArrayList<>();
+                String delimiter = ", *";
+                for (String hostport : address.split(delimiter)) {
+                    if (hostport == null || "".equals(hostport)) {
+                        continue;
+                    }
+                    hostport = hostport.trim();
+
+                    ServerAddress serverAddress = new ServerAddress(hostport.split(":")[0], Integer.valueOf(hostport.split(":")[1]));
+                    addrList.add(serverAddress);
                 }
-                hostport = hostport.trim();
 
-                ServerAddress serverAddress = new ServerAddress(hostport.split(":")[0], Integer.valueOf(hostport.split(":")[1]));
-                addrList.add(serverAddress);
+                if(databaseName == null || "".equals(databaseName)) {
+                    mongoClient = new MongoClient(addrList, options);
+                } else {
+                    // MongoCredential.createScramSha1Credential()三个参数分别为 用户名 数据库名称 密码
+                    List<MongoCredential> credentialList = new ArrayList<>();
+                    MongoCredential credential = MongoCredential.createScramSha1Credential(userName, databaseName, password.toCharArray());
+                    credentialList.add(credential);
+                    mongoClient = new MongoClient(addrList, credential, options);
+                }
+            } catch (Exception e) {
+                logger.error("初始化 ShardedJedis 服务器失败>>>" + e.getMessage(), e);
             }
+        }
+        return mongoClient;
+    }
 
-            if(databaseName == null || "".equals(databaseName)) {
-
-                mongoClient = new MongoClient(addrList, options);
-            } else {
-                // MongoCredential.createScramSha1Credential()三个参数分别为 用户名 数据库名称 密码
-                List<MongoCredential> credentialList = new ArrayList<>();
-                MongoCredential credential = MongoCredential.createScramSha1Credential(userName, databaseName, password.toCharArray());
-                credentialList.add(credential);
-
-                mongoClient = new MongoClient(addrList, credential, options);
-            }
-        } catch (Exception e) {
-            logger.error("初始化 ShardedJedis 服务器失败>>>" + e.getMessage(), e);
+    public static void closeClient() {
+        if (mongoClient != null) {
+            mongoClient.close();
+            mongoClient = null;
         }
     }
+
 }
