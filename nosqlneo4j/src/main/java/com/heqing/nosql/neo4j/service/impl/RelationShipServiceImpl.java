@@ -24,12 +24,12 @@ public class RelationShipServiceImpl implements RelationShipService {
     @Override
     public void createRelationShip(RelationShip relationShip) {
         if(relationShip.getFromNode() != null && relationShip.getToNode() != null) {
-            Map<String, Object> property = new HashMap<>();
+            Map<String, Object> property = new HashMap<>(16);
 
             // 组装From Node信息
             StringBuilder fromNodeCql = new StringBuilder();
             fromNodeCql.append("(");
-            List<Node> fromNode = Neo4jUtil.getNode().listNodeByLabel(relationShip.getFromNode().getLabel(), null);
+            List<Node> fromNode = Neo4jUtil.getNode().listNodeByLabel(relationShip.getFromNode(), null);
             if(fromNode.size() > 0) {
                 fromNodeCql.append(relationShip.getFromNode().getName());
             } else {
@@ -37,7 +37,7 @@ public class RelationShipServiceImpl implements RelationShipService {
                 fromNodeCql.append(":" + relationShip.getFromNode().getName());
                 property = relationShip.getFromNode().getProperty();
                 if(property != null && property.size() > 0) {
-                    fromNodeCql.append(Neo4jUtil.mapToProperty(property, 1));
+                    fromNodeCql.append(Neo4jUtil.mapToProperty(property));
                 }
             }
             fromNodeCql.append(")");
@@ -46,7 +46,7 @@ public class RelationShipServiceImpl implements RelationShipService {
             // 组装From Node信息
             StringBuilder toNodeCql = new StringBuilder();
             toNodeCql.append("(");
-            List<Node> toNode = Neo4jUtil.getNode().listNodeByLabel(relationShip.getToNode().getLabel(), null);
+            List<Node> toNode = Neo4jUtil.getNode().listNodeByLabel(relationShip.getToNode(), null);
             if(toNode.size() > 0) {
                 toNodeCql.append(relationShip.getToNode().getName());
             } else {
@@ -54,7 +54,7 @@ public class RelationShipServiceImpl implements RelationShipService {
                 toNodeCql.append(":" + relationShip.getToNode().getName());
                 property = relationShip.getToNode().getProperty();
                 if (property != null && property.size() > 0) {
-                    toNodeCql.append(Neo4jUtil.mapToProperty(property, 1));
+                    toNodeCql.append(Neo4jUtil.mapToProperty(property));
                 }
             }
             toNodeCql.append(")");
@@ -65,7 +65,7 @@ public class RelationShipServiceImpl implements RelationShipService {
             ship.append(relationShip.getLabel() + ":" + relationShip.getName());
             property = relationShip.getProperty();
             if(property != null && property.size() > 0) {
-                ship.append(Neo4jUtil.mapToProperty(property, 1));
+                ship.append(Neo4jUtil.mapToProperty(property));
             }
             ship.append("]");
 

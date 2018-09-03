@@ -38,11 +38,15 @@ public class TestNode {
 
     @Test
     public void listNodeByName() {
+        Node node = new Node();
+        node.setName("createNode");
+        node.setLabel("Test");
+
         // 根据标签获取节点属性
-        List<String> propertys = new ArrayList<>();
-        propertys.add("name");
-        propertys.add("age");
-        Neo4jUtil.getNode().listNodeByLabel("HQ", propertys);
+        Map<String, String> propertyMap = new HashMap<>();
+        propertyMap.put("name", "name");
+        propertyMap.put("age", "age");
+        Neo4jUtil.getNode().listNodeByLabel(node, propertyMap);
     }
 
     @Test

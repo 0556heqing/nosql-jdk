@@ -71,56 +71,50 @@ public class Neo4jUtil {
 
     /**
      * 将属性集合改为符合cql的集合格式
-     * @param propertys 属性集合
-     * @param type 1:创建 2：修改
+     * @param propertyMap 属性集合
      * @return 符合cql的属性格式
      */
-    public static String mapToProperty(Map<String, Object> propertys, int type) {
+    public static String mapToProperty(Map<String, Object> propertyMap) {
         StringBuilder property = new StringBuilder();
-        if(propertys != null && propertys.size() > 0) {
-            if(type == 1) {
-                property.append("{");
+        if(propertyMap != null && propertyMap.size() > 0) {
+            property.append("{");
+            for (Map.Entry<String, Object> value : propertyMap.entrySet()) {
+                property.append(value.getKey() + ":");
+                property.append(Neo4jUtil.getProperty(value.getValue()) + ",");
             }
-            for (Map.Entry<String, Object> value : propertys.entrySet()) {
-                if(type == 1) {
-                    property.append(value.getKey() + ":");
-                } else if(type == 2) {
-                    property.append(value.getKey() + "=");
-                }
-
-                if (value.getValue() instanceof Byte || value.getValue() instanceof Character || value.getValue() instanceof String) {
-                    // String类型，加入双引号“”
-                    property.append("\"" + value.getValue().toString() + "\"");
-                } else if (value.getValue() instanceof Short
-                        || value.getValue() instanceof Integer || value.getValue() instanceof Long
-                        || value.getValue() instanceof Float || value.getValue() instanceof Double) {
-                    // 数字类型
-                    property.append(value.getValue().toString());
-                } else if (value.getValue() instanceof Boolean) {
-                    // boolean 类型
-                    if (((Boolean) value.getValue()).booleanValue()) {
-                        property.append("\"true\"");
-                    } else {
-                        property.append("\"false\"");
-                    }
-                } else if (value.getValue() instanceof Date) {
-                    // Date类型，改为yyyy-MM-dd HH:mm:ss格式
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    property.append("\"" + formatter.format(value.getValue()) + "\"");
-                } else {
-                    property.append("\"" + JSON.toJSONString(value.getValue()).replaceAll("\"", "\\\\\"") + "\"");
-                }
-                property.append(",");
-            }
-            if(type == 1) {
-                property.append("}");
-            }
+            property.append("}");
         }
         String result = property.toString();
         if(result.endsWith(",}")) {
             result = result.replace(",}", "}");
         }
         return result;
+    }
+
+    public static String getProperty(Object value) {
+        String property = "";
+        if (value instanceof Byte || value instanceof Character || value instanceof String) {
+            // String类型，加入双引号“”
+            property = "\"" + value.toString() + "\"";
+        } else if (value instanceof Short || value instanceof Integer || value instanceof Long
+                || value instanceof Float || value instanceof Double) {
+            // 数字类型
+            property = value.toString();
+        } else if (value instanceof Boolean) {
+            // boolean 类型
+            if (((Boolean) value).booleanValue()) {
+                property = "\"true\"";
+            } else {
+                property = "\"false\"";
+            }
+        } else if (value instanceof Date) {
+            // Date类型，改为yyyy-MM-dd HH:mm:ss格式
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            property = "\"" + formatter.format(value) + "\"";
+        } else {
+            property = "\"" + JSON.toJSONString(value).replaceAll("\"", "\\\\\"") + "\"";
+        }
+        return property;
     }
 
     /**
@@ -132,7 +126,7 @@ public class Neo4jUtil {
         if(obj == null){
             return null;
         }
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
         try {
             BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
             PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();

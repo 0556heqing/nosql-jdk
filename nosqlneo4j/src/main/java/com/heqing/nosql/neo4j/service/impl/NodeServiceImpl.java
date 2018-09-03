@@ -1,6 +1,7 @@
 package com.heqing.nosql.neo4j.service.impl;
 
 import com.heqing.nosql.neo4j.Neo4jUtil;
+import com.heqing.nosql.neo4j.NodeLanguageUtil;
 import com.heqing.nosql.neo4j.model.Node;
 import com.heqing.nosql.neo4j.service.NodeService;
 import org.slf4j.Logger;
@@ -21,10 +22,7 @@ public class NodeServiceImpl implements NodeService {
 
     @Override
     public void createNode(Node node) {
-        String nodeName = node.getName();
-        String labelName = node.getLabel()==null ? "" : ":"+node.getLabel();
-        String property = Neo4jUtil.mapToProperty(node.getProperty(), 1);
-        String cql = "CREATE (" + nodeName + labelName + property + ")";
+        String cql = NodeLanguageUtil.getCreateCql(node.getName(), node.getLabel(), node.getProperty());
         logger.info("createNode ---> cql = " + cql);
     }
 
@@ -39,28 +37,17 @@ public class NodeServiceImpl implements NodeService {
 
     @Override
     public void deleteNode(Node node) {
-        String cql = "MATCH ("+node.getName()+" : " + node.getLabel() + ") DELETE "+node.getName();
+        String matchCql = NodeLanguageUtil.getMatchCql(node.getName(), node.getLabel());
+        String deleteCql = NodeLanguageUtil.getDeleteCql(node.getName());
+        String cql = matchCql + deleteCql;
         logger.info("deleteNode ---> cql = " + cql);
     }
 
     @Override
     public Node removeNodeProperty(Node node, List<String> propertyNameList) {
-        String nodeName = node.getName();
-        String labelName = node.getLabel()==null ? "" : ":"+node.getLabel();
-        String property = Neo4jUtil.mapToProperty(node.getProperty(), 1);
-        String matchCql = "MATCH  (" + nodeName + labelName + property + ") ";
-        String removeCql = "REMOVE ";
-        if(propertyNameList.size() > 0) {
-            for(String propertyName : propertyNameList) {
-                removeCql += nodeName + "." + propertyName + " ,";
-            }
-            if(removeCql.endsWith(" ,")) {
-                removeCql = removeCql.substring(0, removeCql.length()-1);
-            }
-        } else {
-            removeCql += nodeName;
-        }
-        String returnCal = " RETURN " + nodeName;
+        String matchCql = NodeLanguageUtil.getMatchCql(node.getName(), node.getLabel());
+        String removeCql = NodeLanguageUtil.getRemoveCql(node.getName(), propertyNameList);
+        String returnCal = NodeLanguageUtil.getReturnCql(node.getName(), null);
         String cql = matchCql + removeCql + returnCal;
         logger.info("removeProperty ---> cql = " + cql);
 
@@ -69,22 +56,9 @@ public class NodeServiceImpl implements NodeService {
 
     @Override
     public Node removeNodeLabel(Node node, List<String> propertyNameList) {
-        String nodeName = node.getName();
-        String labelName = node.getLabel()==null ? "" : ":"+node.getLabel();
-        String property = Neo4jUtil.mapToProperty(node.getProperty(), 1);
-        String matchCql = "MATCH  (" + nodeName + labelName + property + ") ";
-        String removeCql = "REMOVE ";
-        if(propertyNameList.size() > 0) {
-            for(String propertyName : propertyNameList) {
-                removeCql += nodeName + ":" + propertyName + " ,";
-            }
-            if(removeCql.endsWith(" ,")) {
-                removeCql = removeCql.substring(0, removeCql.length()-1);
-            }
-        } else {
-            removeCql += nodeName;
-        }
-        String returnCal = " RETURN " + nodeName;
+        String matchCql = NodeLanguageUtil.getMatchCql(node.getName(), node.getLabel());
+        String removeCql = NodeLanguageUtil.getRemoveCql(node.getName(), propertyNameList);
+        String returnCal = NodeLanguageUtil.getReturnCql(node.getName(), null);
         String cql = matchCql + removeCql + returnCal;
         logger.info("removeProperty ---> cql = " + cql);
 
@@ -93,16 +67,9 @@ public class NodeServiceImpl implements NodeService {
 
     @Override
     public Node updateNode(Node node) {
-        String nodeName = node.getName();
-        String labelName = node.getLabel()==null ? "" : ":"+node.getLabel();
-        String matchCql = "MATCH  (" + nodeName + ":" + labelName + ") ";
-        String setCql = "SET " + Neo4jUtil.mapToProperty(node.getProperty(), 2);
-//        Map<String, Object> propertys = Neo4jUtil.mapToProperty(node.getProperty());
-//        for (Map.Entry<String, Object> value : node.getProperty().entrySet()) {
-//            setCql += node.getName() + "." + value.getKey() + "=" + value.getValue().toString() + " ,";
-//        }
-//        setCql = setCql.substring(0, setCql.length()-1);
-        String returnCal = " RETURN " + nodeName;
+        String matchCql = NodeLanguageUtil.getMatchCql(node.getName(), node.getLabel());
+        String setCql = NodeLanguageUtil.getSetCql(node.getName(), node.getProperty());
+        String returnCal = NodeLanguageUtil.getReturnCql(node.getName(), null);
         String cql = matchCql + setCql + returnCal;
         logger.info("updateNode ---> cql = " + cql);
 
@@ -110,23 +77,13 @@ public class NodeServiceImpl implements NodeService {
     }
 
     @Override
-    public List<Node> listNodeByLabel(String labelName, List<String> propertys) {
+    public List<Node> listNodeByLabel(Node node, Map<String, String> propertyMap) {
         List<Node> nodeList = new ArrayList<>();
 
-        String nodeName = "node";
-        String matchCql = "MATCH ("+nodeName+":"+labelName+")";
-        String returnCql = " RETURN ";
-        if(propertys != null && propertys.size() > 0) {
-            for (String property : propertys) {
-                returnCql += nodeName + "." + property + " ,";
-            }
-            if (returnCql.endsWith(" ,")) {
-                returnCql = returnCql.substring(0, returnCql.length() - 1);
-            }
-        } else {
-            returnCql += nodeName;
-        }
-        logger.info("listNodeByName ---> cql = " + (matchCql + returnCql));
+        String matchCql = NodeLanguageUtil.getMatchCql(node.getName(), node.getLabel());
+        String returnCal = NodeLanguageUtil.getReturnCql(node.getName(), propertyMap);
+        String cql = matchCql + returnCal;
+        logger.info("listNodeByLabel ---> cql = " + cql);
 
         return nodeList;
     }

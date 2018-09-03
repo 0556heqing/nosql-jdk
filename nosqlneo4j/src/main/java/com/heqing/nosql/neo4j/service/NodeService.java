@@ -3,6 +3,7 @@ package com.heqing.nosql.neo4j.service;
 import com.heqing.nosql.neo4j.model.Node;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author heqing
@@ -53,9 +54,9 @@ public interface NodeService {
 
     /**
      * 获取标签下节点的属性
-     * @param labelName 标签名
-     * @param propertys 返回的属性
+     * @param node 节点
+     * @param propertyMap 返回的属性
      * @return 节点
      */
-    List<Node> listNodeByLabel(String labelName, List<String> propertys);
+    List<Node> listNodeByLabel(Node node, Map<String, String> propertyMap);
 }
