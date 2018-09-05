@@ -64,7 +64,7 @@ public class TestDocument {
 
     @Test
     public void testGetAllDocumentList() {
-        List<Document> docList = MongodbUtil.getDocument().getAllDocumentList("hq_test", "test2");
+        List<Document> docList = MongodbUtil.getDocument().listAllDocument("hq_test", "test2");
         for(Document doc : docList) {
             System.out.println("--->name1="+doc.getString("name1")+", name2="+doc.getString("name2"));
         }
@@ -72,7 +72,7 @@ public class TestDocument {
         System.out.println("--------------------------------------");
 
         MongoCollection<Document> coll3 = MongodbUtil.getDocument().getCollectionByName("hq_test", "test4");
-        docList = MongodbUtil.getDocument().getAllDocumentList(coll3);
+        docList = MongodbUtil.getDocument().listAllDocument(coll3);
         for(Document doc : docList) {
             System.out.println("--->name1="+doc.getString("name1")+", name2="+doc.getString("name2"));
         }
@@ -81,7 +81,7 @@ public class TestDocument {
     @Test
     public void testGetDocumentListByParam() {
         Bson orderBy = Filters.eq("name1", "hq1");
-        List<Document> docList = MongodbUtil.getDocument().getDocumentListByParam("hq_test", "test2", orderBy);
+        List<Document> docList = MongodbUtil.getDocument().listDocumentByParam("hq_test", "test2", orderBy);
         for(Document doc : docList) {
             System.out.println("--->name1="+doc.getString("name1")+", name2="+doc.getString("name2")+", age="+doc.getInteger("age"));
         }
@@ -89,7 +89,7 @@ public class TestDocument {
         System.out.println("--------------------------------------");
 
         MongoCollection<Document> coll3 = MongodbUtil.getDocument().getCollectionByName("hq_test", "test4");
-        docList = MongodbUtil.getDocument().getDocumentListByParam(coll3, orderBy);
+        docList = MongodbUtil.getDocument().listDocumentByParam(coll3, orderBy);
         for(Document doc : docList) {
             System.out.println("--->name1="+doc.getString("name1")+", name2="+doc.getString("name2")+", age="+doc.getInteger("age"));
         }
@@ -98,7 +98,7 @@ public class TestDocument {
     @Test
     public void testGetDocumentListByOrder() {
         Bson orderBy = Filters.eq("age", -1);
-        List<Document> docList = MongodbUtil.getDocument().getDocumentListByOrder("hq_test", "test2", orderBy);
+        List<Document> docList = MongodbUtil.getDocument().listDocumentByOrder("hq_test", "test2", orderBy);
         for(Document doc : docList) {
             System.out.println("--->name1="+doc.getString("name1")+", name2="+doc.getString("name2")+", age="+doc.getInteger("age"));
         }
@@ -106,7 +106,7 @@ public class TestDocument {
         System.out.println("--------------------------------------");
 
         MongoCollection<Document> coll3 = MongodbUtil.getDocument().getCollectionByName("hq_test", "test4");
-        docList = MongodbUtil.getDocument().getDocumentListByOrder(coll3, orderBy);
+        docList = MongodbUtil.getDocument().listDocumentByOrder(coll3, orderBy);
         for(Document doc : docList) {
             System.out.println("--->name1="+doc.getString("name1")+", name2="+doc.getString("name2")+", age="+doc.getInteger("age"));
         }
@@ -114,7 +114,7 @@ public class TestDocument {
 
     @Test
     public void testGetDocumentListByPage() {
-        List<Document> docList = MongodbUtil.getDocument().getDocumentListByPage("hq_test", "test2", 1, 2);
+        List<Document> docList = MongodbUtil.getDocument().listDocumentByPage("hq_test", "test2", 1, 2);
         for(Document doc : docList) {
             System.out.println("--->name1="+doc.getString("name1")+", name2="+doc.getString("name2")+", age="+doc.getInteger("age"));
         }
@@ -122,7 +122,7 @@ public class TestDocument {
         System.out.println("--------------------------------------");
 
         MongoCollection<Document> coll4 = MongodbUtil.getDocument().getCollectionByName("hq_test", "test4");
-        docList = MongodbUtil.getDocument().getDocumentListByPage(coll4, 1, 1);
+        docList = MongodbUtil.getDocument().listDocumentByPage(coll4, 1, 1);
         for(Document doc : docList) {
             System.out.println("--->name1="+doc.getString("name1")+", name2="+doc.getString("name2")+", age="+doc.getInteger("age"));
         }
@@ -134,26 +134,26 @@ public class TestDocument {
         Bson order = Filters.eq("age", -1);
 
         System.out.println("-----------------param + order---------------------");
-        List<Document>  docList = MongodbUtil.getDocument().getDocumentListByParamAndOrder("hq_test", "test2", param, order);
+        List<Document>  docList = MongodbUtil.getDocument().listDocumentByParamAndOrder("hq_test", "test2", param, order);
         for(Document doc : docList) {
             System.out.println("--->name1="+doc.getString("name1")+", name2="+doc.getString("name2")+", age="+doc.getInteger("age"));
         }
         System.out.println("----------------param + page----------------------");
 
-        docList = MongodbUtil.getDocument().getDocumentListByParamAndPage("hq_test", "test2", param, 1, 2);
+        docList = MongodbUtil.getDocument().listDocumentByParamAndPage("hq_test", "test2", param, 1, 2);
         for(Document doc : docList) {
             System.out.println("--->name1="+doc.getString("name1")+", name2="+doc.getString("name2")+", age="+doc.getInteger("age"));
         }
         System.out.println("----------------order + page----------------------");
 
-        docList = MongodbUtil.getDocument().getDocumentListByOrderAndPage("hq_test", "test2", order, 1, 2);
+        docList = MongodbUtil.getDocument().listDocumentByOrderAndPage("hq_test", "test2", order, 1, 2);
         for(Document doc : docList) {
             System.out.println("--->name1="+doc.getString("name1")+", name2="+doc.getString("name2")+", age="+doc.getInteger("age"));
         }
 
         System.out.println("----------------param + order + page----------------------");
 
-        docList = MongodbUtil.getDocument().getDocumentList("hq_test", "test2", param, order, 1, 2);
+        docList = MongodbUtil.getDocument().listDocument("hq_test", "test2", param, order, 1, 2);
         for(Document doc : docList) {
             System.out.println("--->name1="+doc.getString("name1")+", name2="+doc.getString("name2")+", age="+doc.getInteger("age"));
         }

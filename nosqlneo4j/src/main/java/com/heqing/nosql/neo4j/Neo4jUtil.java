@@ -26,6 +26,8 @@ import java.util.Map;
  */
 public class Neo4jUtil {
 
+    private static final String COMMA = ",";
+
     private static final Logger logger = LoggerFactory.getLogger(Neo4jUtil.class);
 
     private static NodeService nodeService;
@@ -75,22 +77,28 @@ public class Neo4jUtil {
      * @return 符合cql的属性格式
      */
     public static String mapToProperty(Map<String, Object> propertyMap) {
-        StringBuilder property = new StringBuilder();
+        String cql = "";
         if(propertyMap != null && propertyMap.size() > 0) {
-            property.append("{");
+            cql += "{";
+            StringBuilder property = new StringBuilder();
             for (Map.Entry<String, Object> value : propertyMap.entrySet()) {
                 property.append(value.getKey() + ":");
                 property.append(Neo4jUtil.getProperty(value.getValue()) + ",");
             }
-            property.append("}");
+            String result = property.toString();
+            if(result.endsWith(COMMA)) {
+                result = result.substring(0, result.length()-1);
+            }
+            cql += result + "}";
         }
-        String result = property.toString();
-        if(result.endsWith(",}")) {
-            result = result.replace(",}", "}");
-        }
-        return result;
+        return cql;
     }
 
+    /**
+     * 将属性转换为字符形式输出
+     * @param value 属性值
+     * @return 属性字符值
+     */
     public static String getProperty(Object value) {
         String property = "";
         if (value instanceof Byte || value instanceof Character || value instanceof String) {

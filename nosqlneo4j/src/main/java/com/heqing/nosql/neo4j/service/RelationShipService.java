@@ -17,15 +17,21 @@ public interface RelationShipService {
     void createRelationShip(RelationShip relationShip);
 
     /**
-     * 删除关系
+     * 修改节点
      * @param relationShip 关系
      */
-    void deleteRelationShip(RelationShip relationShip);
+    void updateRelationShip(RelationShip relationShip);
 
-    /**
-     * 获取标签下关系的属性
-     * @param shipLabel 关系标签
-     * @return 节点
-     */
-    List<RelationShip> listRelationShipByLabel(String shipLabel);
+//    /**
+//     * 删除关系
+//     * @param relationShip 关系
+//     */
+//    void deleteRelationShip(RelationShip relationShip);
+//
+//    /**
+//     * 获取标签下关系的属性
+//     * @param shipLabel 关系标签
+//     * @return 节点
+//     */
+//    List<RelationShip> listRelationShipByLabel(String shipLabel);
 }

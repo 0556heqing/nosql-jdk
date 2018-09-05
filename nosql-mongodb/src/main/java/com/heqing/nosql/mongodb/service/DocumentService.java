@@ -100,14 +100,14 @@ public interface DocumentService extends CollectionService {
      * @param collName 集合名
      * @return  查找到文档
      */
-    List<Document> getAllDocumentList(String dbName, String collName);
+    List<Document> listAllDocument(String dbName, String collName);
 
     /**
      * 查找数据库集合中所有文档
      * @param coll 集合文档
      * @return 查找到文档
      */
-    List<Document> getAllDocumentList(MongoCollection<Document> coll);
+    List<Document> listAllDocument(MongoCollection<Document> coll);
 
     /**
      * 获取文档数量
@@ -148,7 +148,7 @@ public interface DocumentService extends CollectionService {
      * @param param	查询条件
      * @return 查找到文档
      */
-    List<Document> getDocumentListByParam(String dbName, String collName, Bson param);
+    List<Document> listDocumentByParam(String dbName, String collName, Bson param);
 
     /**
      * 根据条件查找文档
@@ -156,7 +156,7 @@ public interface DocumentService extends CollectionService {
      * @param param	查询条件
      * @return 查找到文档
      */
-    List<Document> getDocumentListByParam(MongoCollection<Document> coll, Bson param);
+    List<Document> listDocumentByParam(MongoCollection<Document> coll, Bson param);
 
     /**
      * 查找数据库集合中所有文档，并排序
@@ -165,7 +165,7 @@ public interface DocumentService extends CollectionService {
      * @param order	排序条件
      * @return 查找到文档
      */
-    List<Document> getDocumentListByOrder(String dbName, String collName, Bson order);
+    List<Document> listDocumentByOrder(String dbName, String collName, Bson order);
 
     /**
      * 查找数据库集合中所有文档，并排序
@@ -173,7 +173,7 @@ public interface DocumentService extends CollectionService {
      * @param order	排序条件
      * @return 查找到文档
      */
-    List<Document> getDocumentListByOrder(MongoCollection<Document> coll, Bson order);
+    List<Document> listDocumentByOrder(MongoCollection<Document> coll, Bson order);
 
     /**
      * 根据页码查找文档
@@ -183,7 +183,7 @@ public interface DocumentService extends CollectionService {
      * @param pageSize 每页数量
      * @return 查找到文档
      */
-    List<Document> getDocumentListByPage(String dbName, String collName, int pageNo, int pageSize);
+    List<Document> listDocumentByPage(String dbName, String collName, int pageNo, int pageSize);
 
     /**
      * 根据页码查找文档
@@ -192,7 +192,7 @@ public interface DocumentService extends CollectionService {
      * @param pageSize 每页数量
      * @return 查找到文档
      */
-    List<Document> getDocumentListByPage(MongoCollection<Document> coll, int pageNo, int pageSize);
+    List<Document> listDocumentByPage(MongoCollection<Document> coll, int pageNo, int pageSize);
 
     /**
      * 根据条件查找文档,并且根据排序条件排序
@@ -202,7 +202,7 @@ public interface DocumentService extends CollectionService {
      * @param order	排序条件
      * @return 查找到文档
      */
-    List<Document> getDocumentListByParamAndOrder(String dbName, String collName, Bson param, Bson order);
+    List<Document> listDocumentByParamAndOrder(String dbName, String collName, Bson param, Bson order);
 
     /**
      * 根据条件查找文档,并且根据排序条件排序
@@ -211,7 +211,7 @@ public interface DocumentService extends CollectionService {
      * @param orderBy 排序条件
      * @return 查找到文档
      */
-    List<Document> getDocumentListByParamAndOrder(MongoCollection<Document> coll, Bson param, Bson orderBy);
+    List<Document> listDocumentByParamAndOrder(MongoCollection<Document> coll, Bson param, Bson orderBy);
 
     /**
      * 根据条件查找文档,并且分页
@@ -222,7 +222,7 @@ public interface DocumentService extends CollectionService {
      * @param pageSize 每页数量
      * @return 查找到文档
      */
-    List<Document> getDocumentListByParamAndPage(String dbName, String collName, Bson param, int pageNo, int pageSize);
+    List<Document> listDocumentByParamAndPage(String dbName, String collName, Bson param, int pageNo, int pageSize);
 
     /**
      * 根据条件查找文档,并且分页
@@ -232,7 +232,7 @@ public interface DocumentService extends CollectionService {
      * @param pageSize 每页数量
      * @return 查找到文档
      */
-    List<Document> getDocumentListByParamAndPage(MongoCollection<Document> coll, Bson param, int pageNo, int pageSize);
+    List<Document> listDocumentByParamAndPage(MongoCollection<Document> coll, Bson param, int pageNo, int pageSize);
 
     /**
      * 根据条件排序查找文件,并且分页
@@ -243,7 +243,7 @@ public interface DocumentService extends CollectionService {
      * @param pageSize 每页数量
      * @return 查找到文档
      */
-    List<Document> getDocumentListByOrderAndPage(String dbName, String collName, Bson order, int pageNo, int pageSize);
+    List<Document> listDocumentByOrderAndPage(String dbName, String collName, Bson order, int pageNo, int pageSize);
 
     /**
      * 根据条件排序查找文件,并且分页
@@ -253,7 +253,7 @@ public interface DocumentService extends CollectionService {
      * @param pageSize 每页数量
      * @return 查找到文档
      */
-    List<Document> getDocumentListByOrderAndPage(MongoCollection<Document> coll, Bson order, int pageNo, int pageSize);
+    List<Document> listDocumentByOrderAndPage(MongoCollection<Document> coll, Bson order, int pageNo, int pageSize);
 
     /**
      * 根据条件查找文档,并且根据排序条件排序,并且根据条件分页
@@ -265,7 +265,7 @@ public interface DocumentService extends CollectionService {
      * @param pageSize 每页数量
      * @return 查找到文档
      */
-    List<Document> getDocumentList(String dbName, String collName, Bson param, Bson order, int pageNo, int pageSize);
+    List<Document> listDocument(String dbName, String collName, Bson param, Bson order, int pageNo, int pageSize);
 
     /**
      * 根据条件查找文档,并且根据排序条件排序,并且根据条件分页
@@ -276,7 +276,7 @@ public interface DocumentService extends CollectionService {
      * @param pageSize 每页数量
      * @return  查找到文档
      */
-    List<Document> getDocumentList(MongoCollection<Document> coll, Bson param, Bson order, int pageNo, int pageSize);
+    List<Document> listDocument(MongoCollection<Document> coll, Bson param, Bson order, int pageNo, int pageSize);
 
     /**
      * 根据文档 Id 修改数据库集合中文档

@@ -19,7 +19,7 @@ public class Node {
     /**
      * 一个或多个节点标签名称
      */
-    private String label = "";
+    private List<String> labels;
 
     /**
      * 一些属性（键值对）
@@ -34,12 +34,12 @@ public class Node {
         this.name = name;
     }
 
-    public String getLabel() {
-        return label;
+    public List<String> getLabels() {
+        return labels;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    public void setLabels(List<String> labels) {
+        this.labels = labels;
     }
 
     public Map<String, Object> getProperty() {

@@ -87,12 +87,12 @@ public class DocumentServiceImpl extends CollectionServiceImpl implements Docume
     }
 
     @Override
-    public List<Document> getAllDocumentList(String dbName, String collName) {
-        return getAllDocumentList(getCollectionByName(dbName, collName));
+    public List<Document> listAllDocument(String dbName, String collName) {
+        return listAllDocument(getCollectionByName(dbName, collName));
     }
 
     @Override
-    public List<Document> getAllDocumentList(MongoCollection<Document> coll) {
+    public List<Document> listAllDocument(MongoCollection<Document> coll) {
         Bson orderBy = new BasicDBObject("_id", -1);
         MongoCursor<Document> mongoCursor = coll.find().sort(orderBy).iterator();
         List<Document> result = new ArrayList<>();
@@ -123,12 +123,12 @@ public class DocumentServiceImpl extends CollectionServiceImpl implements Docume
     }
 
     @Override
-    public List<Document> getDocumentListByParam(String dbName, String collName, Bson param) {
-        return getDocumentListByParam(getCollectionByName(dbName, collName), param);
+    public List<Document> listDocumentByParam(String dbName, String collName, Bson param) {
+        return listDocumentByParam(getCollectionByName(dbName, collName), param);
     }
 
     @Override
-    public List<Document> getDocumentListByParam(MongoCollection<Document> coll, Bson param) {
+    public List<Document> listDocumentByParam(MongoCollection<Document> coll, Bson param) {
         Bson orderBy = new BasicDBObject("_id", -1);
         MongoCursor<Document> mongoCursor = coll.find(param).sort(orderBy).iterator();
         List<Document> result = new ArrayList<>();
@@ -139,12 +139,12 @@ public class DocumentServiceImpl extends CollectionServiceImpl implements Docume
     }
 
     @Override
-    public List<Document> getDocumentListByOrder(String dbName, String collName, Bson order) {
-        return getDocumentListByOrder(getCollectionByName(dbName, collName), order);
+    public List<Document> listDocumentByOrder(String dbName, String collName, Bson order) {
+        return listDocumentByOrder(getCollectionByName(dbName, collName), order);
     }
 
     @Override
-    public List<Document> getDocumentListByOrder(MongoCollection<Document> coll, Bson order) {
+    public List<Document> listDocumentByOrder(MongoCollection<Document> coll, Bson order) {
         MongoCursor<Document> mongoCursor = coll.find().sort(order).iterator();
         List<Document> result = new ArrayList<>();
         while(mongoCursor.hasNext()){
@@ -154,12 +154,12 @@ public class DocumentServiceImpl extends CollectionServiceImpl implements Docume
     }
 
     @Override
-    public List<Document> getDocumentListByPage(String dbName, String collName, int pageNo, int pageSize) {
-        return getDocumentListByPage(getCollectionByName(dbName, collName), pageNo, pageSize);
+    public List<Document> listDocumentByPage(String dbName, String collName, int pageNo, int pageSize) {
+        return listDocumentByPage(getCollectionByName(dbName, collName), pageNo, pageSize);
     }
 
     @Override
-    public List<Document> getDocumentListByPage(MongoCollection<Document> coll, int pageNo, int pageSize) {
+    public List<Document> listDocumentByPage(MongoCollection<Document> coll, int pageNo, int pageSize) {
         MongoCursor<Document> mongoCursor = coll.find().skip((pageNo - 1) * pageSize).limit(pageSize).iterator();
         List<Document> result = new ArrayList<>();
         while(mongoCursor.hasNext()){
@@ -169,12 +169,12 @@ public class DocumentServiceImpl extends CollectionServiceImpl implements Docume
     }
 
     @Override
-    public List<Document> getDocumentListByParamAndOrder(String dbName, String collName, Bson param, Bson order) {
-        return getDocumentListByParamAndOrder(getCollectionByName(dbName, collName), param, order);
+    public List<Document> listDocumentByParamAndOrder(String dbName, String collName, Bson param, Bson order) {
+        return listDocumentByParamAndOrder(getCollectionByName(dbName, collName), param, order);
     }
 
     @Override
-    public List<Document> getDocumentListByParamAndOrder(MongoCollection<Document> coll, Bson param, Bson orderBy) {
+    public List<Document> listDocumentByParamAndOrder(MongoCollection<Document> coll, Bson param, Bson orderBy) {
         MongoCursor<Document> mongoCursor = coll.find(param).sort(orderBy).iterator();
         List<Document> result = new ArrayList<>();
         while(mongoCursor.hasNext()){
@@ -184,12 +184,12 @@ public class DocumentServiceImpl extends CollectionServiceImpl implements Docume
     }
 
     @Override
-    public List<Document> getDocumentListByParamAndPage(String dbName, String collName, Bson param, int pageNo, int pageSize) {
-        return getDocumentListByParamAndPage(getCollectionByName(dbName, collName), param, pageNo, pageSize);
+    public List<Document> listDocumentByParamAndPage(String dbName, String collName, Bson param, int pageNo, int pageSize) {
+        return listDocumentByParamAndPage(getCollectionByName(dbName, collName), param, pageNo, pageSize);
     }
 
     @Override
-    public List<Document> getDocumentListByParamAndPage(MongoCollection<Document> coll, Bson param, int pageNo, int pageSize) {
+    public List<Document> listDocumentByParamAndPage(MongoCollection<Document> coll, Bson param, int pageNo, int pageSize) {
         MongoCursor<Document> mongoCursor = coll.find(param).skip((pageNo - 1) * pageSize).limit(pageSize).iterator();
         List<Document> result = new ArrayList<>();
         while(mongoCursor.hasNext()){
@@ -199,12 +199,12 @@ public class DocumentServiceImpl extends CollectionServiceImpl implements Docume
     }
 
     @Override
-    public List<Document> getDocumentListByOrderAndPage(String dbName, String collName, Bson order, int pageNo, int pageSize) {
-        return getDocumentListByOrderAndPage(getCollectionByName(dbName, collName), order, pageNo, pageSize);
+    public List<Document> listDocumentByOrderAndPage(String dbName, String collName, Bson order, int pageNo, int pageSize) {
+        return listDocumentByOrderAndPage(getCollectionByName(dbName, collName), order, pageNo, pageSize);
     }
 
     @Override
-    public List<Document> getDocumentListByOrderAndPage(MongoCollection<Document> coll, Bson order, int pageNo, int pageSize) {
+    public List<Document> listDocumentByOrderAndPage(MongoCollection<Document> coll, Bson order, int pageNo, int pageSize) {
         if(order == null) {
             order = new BasicDBObject("_id", -1);
         }
@@ -217,12 +217,12 @@ public class DocumentServiceImpl extends CollectionServiceImpl implements Docume
     }
 
     @Override
-    public List<Document> getDocumentList(String dbName, String collName, Bson param, Bson order, int pageNo, int pageSize) {
-        return getDocumentList(getCollectionByName(dbName, collName), param, order, pageNo, pageSize);
+    public List<Document> listDocument(String dbName, String collName, Bson param, Bson order, int pageNo, int pageSize) {
+        return listDocument(getCollectionByName(dbName, collName), param, order, pageNo, pageSize);
     }
 
     @Override
-    public List<Document> getDocumentList(MongoCollection<Document> coll, Bson param, Bson order, int pageNo, int pageSize) {
+    public List<Document> listDocument(MongoCollection<Document> coll, Bson param, Bson order, int pageNo, int pageSize) {
         if(order == null) {
             order = new BasicDBObject("_id", -1);
         }

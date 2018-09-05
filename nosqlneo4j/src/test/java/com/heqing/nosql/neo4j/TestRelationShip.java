@@ -4,9 +4,7 @@ import com.heqing.nosql.neo4j.model.Node;
 import com.heqing.nosql.neo4j.model.RelationShip;
 import org.junit.Test;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author heqing
@@ -16,61 +14,60 @@ public class TestRelationShip {
 
     @Test
     public void createRelationShip() {
-        Map<String, Object> book1 = new HashMap<>();
-        book1.put("name", "西游记");
-        book1.put("page", 1000);
-        Node formNode = new Node();
-        formNode.setName("book1");
-        formNode.setLabel("fb1");
-        formNode.setProperty(book1);
+        Map<String, Object> property = null;
+        List<String> labelList = new ArrayList<>();
+        labelList.add("Student");
 
-        Map<String, Object> book2 = new HashMap<>();
-        book2.put("name", "红楼梦");
-        book2.put("time", new Date());
-        Node toNode = new Node();
-        toNode.setName("book2");
-        toNode.setLabel("fb2");
-        toNode.setProperty(book2);
+        Node student1 = new Node();
+        student1.setName("s1");
+        student1.setLabels(labelList);
+        property = new HashMap<>();
+        property.put("name", "唐老鸭");
+        property.put("age", 18);
+        property.put("time", new Date());
+        property.put("isMan", true);
+        student1.setProperty(property);
 
-        Node test = new Node();
-        test.setName("test");
-        Map<String, Object> book = new HashMap<>();
-        book.put("name", "名著");
-        book.put("isFamous", true);
-        book.put("test", test);
+        Node student2 = new Node();
+        student2.setName("s2");
+        student2.setLabels(labelList);
+        property = new HashMap<>();
+        property.put("name", "米老鼠");
+        property.put("age", 17);
+        property.put("isMan", false);
+        student2.setProperty(property);
 
         RelationShip relationShip = new RelationShip();
-        relationShip.setName("LIKES");
-        relationShip.setLabel("like");
-        relationShip.setProperty(book);
-        relationShip.setFromNode(formNode);
-        relationShip.setToNode(toNode);
+        relationShip.setName("like");
+        relationShip.setLabel("LIKE");
+        relationShip.setFromNode(student1);
+        relationShip.setToNode(student2);
 
         Neo4jUtil.getRelationShip().createRelationShip(relationShip);
     }
-
-    @Test
-    public void listRelationShipByLabel() {
-        String shipLabel = "喜欢";
-        Neo4jUtil.getRelationShip().listRelationShipByLabel(shipLabel);
-    }
-
-    @Test
-    public void deleteRelationShip() {
-        Node formNode = new Node();
-        formNode.setName("book1");
-        formNode.setLabel("fb1");
-
-        Node toNode = new Node();
-        toNode.setName("book2");
-        toNode.setLabel("fb2");
-
-        RelationShip relationShip = new RelationShip();
-        relationShip.setName("LIKES");
-        relationShip.setLabel("like");
-        relationShip.setFromNode(formNode);
-        relationShip.setToNode(toNode);
-
-        Neo4jUtil.getRelationShip().deleteRelationShip(relationShip);
-    }
+//
+//    @Test
+//    public void listRelationShipByLabel() {
+//        String shipLabel = "喜欢";
+//        Neo4jUtil.getRelationShip().listRelationShipByLabel(shipLabel);
+//    }
+//
+//    @Test
+//    public void deleteRelationShip() {
+//        Node formNode = new Node();
+//        formNode.setName("book1");
+//        formNode.setLabel("fb1");
+//
+//        Node toNode = new Node();
+//        toNode.setName("book2");
+//        toNode.setLabel("fb2");
+//
+//        RelationShip relationShip = new RelationShip();
+//        relationShip.setName("LIKES");
+//        relationShip.setLabel("like");
+//        relationShip.setFromNode(formNode);
+//        relationShip.setToNode(toNode);
+//
+//        Neo4jUtil.getRelationShip().deleteRelationShip(relationShip);
+//    }
 }

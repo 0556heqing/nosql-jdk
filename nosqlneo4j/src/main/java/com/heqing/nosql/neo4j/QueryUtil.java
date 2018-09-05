@@ -4,10 +4,19 @@ import java.util.List;
 
 /**
  * 查询条件
+ * @see <a href="https://www.w3cschool.cn/neo4j/neo4j_cql_where_clause.html">neo4j -> where子句</a>
  * @author heqing
  * @date 2018/9/3 14:15
  */
 public class QueryUtil {
+
+    private static final String COMMA = ",";
+    private static final String AND = " AND ";
+    private static final String OR = " OR ";
+    private static final String NOT = " NOT ";
+    private static final String XOR = " XOR ";
+    private static final String UNION = " UNION ";
+    private static final String UNION_ALL = " UNION ALL ";
 
     /**
      * 等于
@@ -77,33 +86,49 @@ public class QueryUtil {
 
     /**
      * 等于null
+     * @see <a href="https://www.w3cschool.cn/neo4j/neo4j_cql_null.html">neo4j -> null</a>
      * @param nodeName 节点名
      * @param field 字段名
      * @return 查询条件
      */
     public static String isNull(String nodeName, String field) {
-        return nodeName + "." + field + " IS NULL ";
+        return nodeName + "." + field + " IS NULL";
     }
 
     /**
      * 不等于null
+     * @see <a href="https://www.w3cschool.cn/neo4j/neo4j_cql_null.html">neo4j -> not null</a>
      * @param nodeName 节点名
      * @param field 字段名
      * @return 查询条件
      */
     public static String isNotNull(String nodeName, String field) {
-        return nodeName + "." + field + " IS NOT NULL ";
+        return nodeName + "." + field + " IS NOT NULL";
     }
 
     /**
      * 属于
+     * @see <a href="https://www.w3cschool.cn/neo4j/neo4j_cql_in_operator.html">neo4j -> in</a>
      * @param nodeName 节点名
      * @param field 字段名
      * @param values 值
      * @return 查询条件
      */
     public static String in(String nodeName, String field, List<Object> values) {
-        return nodeName + "." + field + " IN " + values.toString();
+        String cql = "";
+        if(values != null && values.size() > 0) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("[");
+            for(Object value : values) {
+                sb.append(" " + Neo4jUtil.getProperty(value) +",");
+            }
+            cql = sb.toString();
+            if(cql.endsWith(COMMA)) {
+                cql = cql.substring(0, cql.length()-2);
+            }
+            cql = nodeName + "." + field + " IN " + cql + "]";
+        }
+        return cql;
     }
 
     /**
@@ -117,11 +142,11 @@ public class QueryUtil {
             StringBuilder sb = new StringBuilder();
             for (String f : fields) {
                 sb.append("(" + f + ")");
-                sb.append(" AND");
+                sb.append(" AND ");
             }
             cql = sb.toString();
-            if(cql.endsWith(" AND")) {
-                cql = cql.substring(0, cql.length()-3);
+            if(cql.endsWith(AND)) {
+                cql = cql.substring(0, cql.length()-4);
             }
         }
         return cql;
@@ -138,11 +163,11 @@ public class QueryUtil {
             StringBuilder sb = new StringBuilder();
             for (String f : fields) {
                 sb.append("(" + f + ")");
-                sb.append(" OR");
+                sb.append(" OR ");
             }
             cql = sb.toString();
-            if(cql.endsWith(" OR")) {
-                cql = cql.substring(0, cql.length()-2);
+            if(cql.endsWith(OR)) {
+                cql = cql.substring(0, cql.length()-3);
             }
         }
         return cql;
@@ -159,11 +184,11 @@ public class QueryUtil {
             StringBuilder sb = new StringBuilder();
             for (String f : fields) {
                 sb.append("(" + f + ")");
-                sb.append(" NOT");
+                sb.append(" NOT ");
             }
             cql = sb.toString();
-            if(cql.endsWith(" NOT")) {
-                cql = cql.substring(0, cql.length()-3);
+            if(cql.endsWith(NOT)) {
+                cql = cql.substring(0, cql.length()-4);
             }
         }
         return cql;
@@ -180,11 +205,11 @@ public class QueryUtil {
             StringBuilder sb = new StringBuilder();
             for (String f : fields) {
                 sb.append("(" + f + ")");
-                sb.append(" XOR");
+                sb.append(" XOR ");
             }
             cql = sb.toString();
-            if(cql.endsWith(" XOR")) {
-                cql = cql.substring(0, cql.length()-3);
+            if(cql.endsWith(XOR)) {
+                cql = cql.substring(0, cql.length()-4);
             }
         }
         return cql;
@@ -192,6 +217,7 @@ public class QueryUtil {
 
     /**
      * 它将两组结果中的公共行组合并返回到一组结果中。 它不从两个节点返回重复的行。
+     * @see <a href="https://www.w3cschool.cn/neo4j/neo4j_cql_union.html">neo4j -> 合并</a>
      * @param cqls 多个查询语句
      * @return 组合条件
      */
@@ -201,11 +227,11 @@ public class QueryUtil {
             StringBuilder sb = new StringBuilder();
             for (String c : cqls) {
                 sb.append("(" + c + ")");
-                sb.append(" UNION");
+                sb.append(" UNION ");
             }
             cql = sb.toString();
-            if(cql.endsWith(" UNION")) {
-                cql = cql.substring(0, cql.length()-5);
+            if(cql.endsWith(UNION)) {
+                cql = cql.substring(0, cql.length()-6);
             }
         }
         return cql;
@@ -213,6 +239,7 @@ public class QueryUtil {
 
     /**
      * 它结合并返回两个结果集的所有行成一个单一的结果集。它还返回由两个节点重复行。
+     * @see <a href="https://www.w3cschool.cn/neo4j/neo4j_cql_union.html">neo4j -> 合并</a>
      * @param cqls 多个查询语句
      * @return 组合条件
      */
@@ -222,11 +249,11 @@ public class QueryUtil {
             StringBuilder sb = new StringBuilder();
             for (String c : cqls) {
                 sb.append("(" + c + ")");
-                sb.append(" UNION ALL");
+                sb.append(" UNION ALL ");
             }
             cql = sb.toString();
-            if(cql.endsWith(" UNION ALL")) {
-                cql = cql.substring(0, cql.length()-9);
+            if(cql.endsWith(UNION_ALL)) {
+                cql = cql.substring(0, cql.length()-10);
             }
         }
         return cql;
