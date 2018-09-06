@@ -1,6 +1,6 @@
 package com.heqing.nosql.neo4j.service.impl;
 
-import com.heqing.nosql.neo4j.NodeLanguageUtil;
+import com.heqing.nosql.neo4j.LanguageUtil;
 import com.heqing.nosql.neo4j.model.Node;
 import com.heqing.nosql.neo4j.service.NodeService;
 import org.slf4j.Logger;
@@ -20,35 +20,36 @@ public class NodeServiceImpl implements NodeService {
 
     @Override
     public void addNodeLabel(Node node, String param, List<String> labelList) {
-        String matchCql = NodeLanguageUtil.getMatchCql(node.getName(), node.getLabels());
-        String whereCal = NodeLanguageUtil.getWhereCql(param);
-        String setCql = NodeLanguageUtil.getSetLabelCql(node.getName(), labelList);
+        String matchCql = LanguageUtil.getNodeMatchCql(node);
+        String whereCal = LanguageUtil.getWhereCql(param);
+        node.setLabels(labelList);
+        String setCql = LanguageUtil.getNodeSetLabelCql(node);
         String cql = matchCql + whereCal + setCql;
         logger.info("addNodeLabel ---> cql = " + cql);
     }
 
     @Override
     public void createNode(Node node) {
-        String cql = NodeLanguageUtil.getMergeCql(node.getName(), node.getLabels(), node.getProperty());
+        String cql = LanguageUtil.getNodeMergeCql(node);
         logger.info("createNode ---> cql = " + cql);
     }
 
     @Override
     public void deleteNode(Node node, String param) {
-        String matchCql = NodeLanguageUtil.getMatchCql(node.getName(), node.getLabels());
-        String whereCal = NodeLanguageUtil.getWhereCql(param);
-        String deleteCql = NodeLanguageUtil.getDeleteCql(node.getName());
-        String cql = matchCql + whereCal + deleteCql;
+        String matchCql = LanguageUtil.getNodeMatchCql(node);
+        String whereCql = LanguageUtil.getWhereCql(param);
+        String deleteCql = LanguageUtil.getNodeDeleteCql(node);
+        String cql = matchCql + whereCql + deleteCql;
         logger.info("deleteNode ---> cql = " + cql);
     }
 
     @Override
     public Node deleteNodeLabel(Node node, String param, List<String> labelList) {
-        String matchCql = NodeLanguageUtil.getMatchCql(node.getName(), node.getLabels());
-        String whereCal = NodeLanguageUtil.getWhereCql(param);
-        String removeCql = NodeLanguageUtil.getRemoveLabelCql(node.getName(), labelList);
-        String returnCal = NodeLanguageUtil.getReturnCql(node.getName(), null);
-        String cql = matchCql + whereCal + removeCql + returnCal;
+        String matchCql = LanguageUtil.getNodeMatchCql(node);
+        String whereCql = LanguageUtil.getWhereCql(param);
+        String removeCql = LanguageUtil.getNodeRemoveLabelCql(node, labelList);
+        String returnCal = LanguageUtil.getNodeReturnCql(node, null);
+        String cql = matchCql + whereCql + removeCql + returnCal;
         logger.info("deleteNodeLabel ---> cql = " + cql);
 
         return null;
@@ -56,10 +57,10 @@ public class NodeServiceImpl implements NodeService {
 
     @Override
     public Node deleteNodeProperty(Node node, String param, List<String> propertyList) {
-        String matchCql = NodeLanguageUtil.getMatchCql(node.getName(), node.getLabels());
-        String whereCal = NodeLanguageUtil.getWhereCql(param);
-        String removeCql = NodeLanguageUtil.getRemovePropertyCql(node.getName(), propertyList);
-        String returnCal = NodeLanguageUtil.getReturnCql(node.getName(), null);
+        String matchCql = LanguageUtil.getNodeMatchCql(node);
+        String whereCal = LanguageUtil.getWhereCql(param);
+        String removeCql = LanguageUtil.getNodeRemovePropertyCql(node, propertyList);
+        String returnCal = LanguageUtil.getNodeReturnCql(node, null);
         String cql = matchCql + whereCal + removeCql + returnCal;
         logger.info("deleteNodeProperty ---> cql = " + cql);
 
@@ -68,11 +69,14 @@ public class NodeServiceImpl implements NodeService {
 
     @Override
     public List<Node> listNode(String nodeName, List<String> labelList, String param, Map<String, Integer> sort, int pageNo, int pageSize, Map<String, String> returnMap) {
-        String matchCql = NodeLanguageUtil.getMatchCql(nodeName, labelList);
-        String whereCql = NodeLanguageUtil.getWhereCql(param);
-        String sortCql = NodeLanguageUtil.getSortCql(nodeName, sort);
-        String pageCql = NodeLanguageUtil.getPageCql(pageNo, pageSize);
-        String returnCql = NodeLanguageUtil.getReturnCql(nodeName, returnMap);
+        Node node = new Node();
+        node.setName(nodeName);
+        node.setLabels(labelList);
+        String matchCql = LanguageUtil.getNodeMatchCql(node);
+        String whereCql = LanguageUtil.getWhereCql(param);
+        String sortCql = LanguageUtil.getNodeSortCql(node, sort);
+        String pageCql = LanguageUtil.getPageCql(pageNo, pageSize);
+        String returnCql = LanguageUtil.getNodeReturnCql(node, returnMap);
 
         String cql = matchCql + whereCql + returnCql + sortCql + pageCql;
         logger.info("listNode ---> cql = " + cql);
@@ -81,11 +85,12 @@ public class NodeServiceImpl implements NodeService {
 
     @Override
     public void updateNodeProperty(Node node, String param) {
-        String matchCql = NodeLanguageUtil.getMatchCql(node.getName(), node.getLabels());
-        String whereCal = NodeLanguageUtil.getWhereCql(param);
-        String setCql = NodeLanguageUtil.getSetPropertyCql(node.getName(), node.getProperty());
-        String cql = matchCql + whereCal + setCql;
-        logger.info("updateNode ---> cql = " + cql);
+        String matchCql = LanguageUtil.getNodeMatchCql(node);
+        String whereCal = LanguageUtil.getWhereCql(param);
+        String setCql = LanguageUtil.getNodeSetPropertyCql(node);
+        String returnCql = LanguageUtil.getNodeReturnCql(node, null);
+        String cql = matchCql + whereCal + setCql + returnCql;
+        logger.info("updateNodeProperty ---> cql = " + cql);
     }
 
 }

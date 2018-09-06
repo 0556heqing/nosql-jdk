@@ -10,7 +10,6 @@ import java.util.List;
  */
 public class QueryUtil {
 
-    private static final String COMMA = ",";
     private static final String AND = " AND ";
     private static final String OR = " OR ";
     private static final String NOT = " NOT ";
@@ -20,79 +19,79 @@ public class QueryUtil {
 
     /**
      * 等于
-     * @param nodeName 节点名
+     * @param name 名称
      * @param field 字段名
      * @param value 值
      * @return 查询条件
      */
-    public static String eq(String nodeName, String field, Object value) {
-        return nodeName + "." + field + "=" + Neo4jUtil.getProperty(value);
+    public static String eq(String name, String field, Object value) {
+        return name + "." + field + "=" + LanguageUtil.getProperty(value);
     }
 
     /**
      * 不等于
-     * @param nodeName 节点名
+     * @param name 名称
      * @param field 字段名
      * @param value 值
      * @return 查询条件
      */
-    public static String ne(String nodeName, String field, Object value) {
-        return nodeName + "." + field + "<>" + Neo4jUtil.getProperty(value);
+    public static String ne(String name, String field, Object value) {
+        return name + "." + field + "<>" + LanguageUtil.getProperty(value);
     }
 
     /**
      * 小于
-     * @param nodeName 节点名
+     * @param name 名称
      * @param field 字段名
      * @param value 值
      * @return 查询条件
      */
-    public static String lt(String nodeName, String field, Double value) {
-        return nodeName + "." + field + "<" + value;
+    public static String lt(String name, String field, Double value) {
+        return name + "." + field + "<" + value;
     }
 
     /**
      * 小于或等于
-     * @param nodeName 节点名
+     * @param name 名称
      * @param field 字段名
      * @param value 值
      * @return 查询条件
      */
-    public static String lte(String nodeName, String field, Double value) {
-        return nodeName + "." + field + "<=" + value;
+    public static String lte(String name, String field, Double value) {
+        return name + "." + field + "<=" + value;
     }
 
     /**
      * 大于
-     * @param nodeName 节点名
+     * @param name 名称
      * @param field 字段名
      * @param value 值
      * @return 查询条件
      */
-    public static String gt(String nodeName, String field, Double value) {
-        return nodeName + "." + field + ">" + value;
+    public static String gt(String name, String field, Double value) {
+        return name + "." + field + ">" + value;
     }
 
     /**
      * 大于或等于
-     * @param nodeName 节点名
+     * @param name 名称
      * @param field 字段名
      * @param value 值
      * @return 查询条件
      */
-    public static String gte(String nodeName, String field, Double value) {
-        return nodeName + "." + field + ">=" + Neo4jUtil.getProperty(value);
+    public static String gte(String name, String field, Double value) {
+        return name + "." + field + ">=" + LanguageUtil.getProperty(value);
     }
 
     /**
      * 等于null
      * @see <a href="https://www.w3cschool.cn/neo4j/neo4j_cql_null.html">neo4j -> null</a>
-     * @param nodeName 节点名
+     * @param name 名称
      * @param field 字段名
      * @return 查询条件
      */
-    public static String isNull(String nodeName, String field) {
-        return nodeName + "." + field + " IS NULL";
+    public static String isNull(String name, String field) {
+        return name + "." + field + " IS NULL";
     }
 
     /**
@@ -109,24 +108,24 @@ public class QueryUtil {
     /**
      * 属于
      * @see <a href="https://www.w3cschool.cn/neo4j/neo4j_cql_in_operator.html">neo4j -> in</a>
-     * @param nodeName 节点名
+     * @param name 名称
      * @param field 字段名
      * @param values 值
      * @return 查询条件
      */
-    public static String in(String nodeName, String field, List<Object> values) {
+    public static String in(String name, String field, List<Object> values) {
         String cql = "";
         if(values != null && values.size() > 0) {
             StringBuilder sb = new StringBuilder();
             sb.append("[");
             for(Object value : values) {
-                sb.append(" " + Neo4jUtil.getProperty(value) +",");
+                sb.append(" " + LanguageUtil.getProperty(value) +",");
             }
             cql = sb.toString();
-            if(cql.endsWith(COMMA)) {
-                cql = cql.substring(0, cql.length()-2);
+            if(cql.endsWith(LanguageUtil.COMMA)) {
+                cql = cql.substring(0, cql.length()-1);
             }
-            cql = nodeName + "." + field + " IN " + cql + "]";
+            cql = name + "." + field + " IN " + cql + "]";
         }
         return cql;
     }

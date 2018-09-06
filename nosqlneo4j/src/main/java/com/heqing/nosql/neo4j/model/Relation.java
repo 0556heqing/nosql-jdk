@@ -6,9 +6,9 @@ import java.util.Map;
 /**
  * 关系
  * @author heqing
- * @date 2018/8/27 19:41
+ * @date 2018/9/6 14:22
  */
-public class RelationShip {
+public class Relation {
 
     /**
      * 节点名称
@@ -18,7 +18,7 @@ public class RelationShip {
     /**
      * 一个或多个节点标签名称
      */
-    private String label;
+    private List<String> labels;
 
     /**
      * 一些属性（键值对）
@@ -43,12 +43,12 @@ public class RelationShip {
         this.name = name;
     }
 
-    public String getLabel() {
-        return label;
+    public List<String> getLabels() {
+        return labels;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    public void setLabels(List<String> labels) {
+        this.labels = labels;
     }
 
     public Map<String, Object> getProperty() {
