@@ -14,7 +14,7 @@
 	<modules>
 		<module>nosql-redis</module>
         <module>nosql-mongodb</module>
-        <module>nosqlneo4j</module>
+        <module>nosql-neo4j</module>
     </modules>
 
 	<properties>
