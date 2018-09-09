@@ -13,15 +13,17 @@ public interface RelationService {
     /**
      * 创建关系
      * @param relation 关系
+     * @return 关系信息
      */
-    void createRelation(Relation relation);
+    Relation createRelation(Relation relation);
 
     /**
      * 修改节点
      * @param relation 关系
      * @param param 筛选条件
+     * @return 关系信息
      */
-    void updateRelation(Relation relation, String param);
+    Relation updateRelation(Relation relation, String param);
 
     /**
      * 根据条件获取关系
@@ -30,7 +32,7 @@ public interface RelationService {
 //     * @param sort 排序条件，为null不添加排序。 key:属性名，value:大于等于0正序，小于0倒序
      * @param pageNo 第几页，为0不跳过数据
      * @param pageSize 每页数量，为0不截取数据
-     * @return 符合条件的节点
+     * @return 符合条件的关系
      */
     List<Relation> listRelation(Relation relation, String param, int pageNo, int pageSize);
 

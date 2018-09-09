@@ -1,11 +1,17 @@
 package com.heqing.nosql.neo4j.service.impl;
 
 import com.heqing.nosql.neo4j.LanguageUtil;
+import com.heqing.nosql.neo4j.Neo4jUtil;
 import com.heqing.nosql.neo4j.model.Node;
 import com.heqing.nosql.neo4j.service.NodeService;
+import org.neo4j.driver.internal.shaded.io.netty.util.internal.StringUtil;
+import org.neo4j.driver.v1.Record;
+import org.neo4j.driver.v1.StatementResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,19 +25,36 @@ public class NodeServiceImpl implements NodeService {
     private static final Logger logger = LoggerFactory.getLogger(NodeServiceImpl.class);
 
     @Override
-    public void addNodeLabel(Node node, String param, List<String> labelList) {
+    public Node addNodeLabel(Node node, String param, List<String> labelList) {
         String matchCql = LanguageUtil.getNodeMatchCql(node);
-        String whereCal = LanguageUtil.getWhereCql(param);
+        String whereCql = LanguageUtil.getWhereCql(param);
         node.setLabels(labelList);
         String setCql = LanguageUtil.getNodeSetLabelCql(node);
-        String cql = matchCql + whereCal + setCql;
+        String returnCql = LanguageUtil.getNodeReturnCql(node, null);
+        String cql = matchCql + whereCql + setCql + returnCql;
         logger.info("addNodeLabel ---> cql = " + cql);
+
+        Node n = null;
+        List<Node> result = Neo4jUtil.listNodeReture(Neo4jUtil.runCql(cql), node, null);
+        if(result.size() > 0) {
+            n = result.get(0);
+        }
+        return n;
     }
 
     @Override
-    public void createNode(Node node) {
-        String cql = LanguageUtil.getNodeMergeCql(node);
+    public Node createNode(Node node) {
+        String matchCql = LanguageUtil.getNodeMergeCql(node);
+        String returnCql = LanguageUtil.getNodeReturnCql(node, null);
+        String cql = matchCql + returnCql;
         logger.info("createNode ---> cql = " + cql);
+
+        Node n = null;
+        List<Node> result = Neo4jUtil.listNodeReture(Neo4jUtil.runCql(cql), node, null);
+        if(result.size() > 0) {
+            n = result.get(0);
+        }
+        return n;
     }
 
     @Override
@@ -41,6 +64,8 @@ public class NodeServiceImpl implements NodeService {
         String deleteCql = LanguageUtil.getNodeDeleteCql(node);
         String cql = matchCql + whereCql + deleteCql;
         logger.info("deleteNode ---> cql = " + cql);
+
+        Neo4jUtil.runCql(cql);
     }
 
     @Override
@@ -48,23 +73,34 @@ public class NodeServiceImpl implements NodeService {
         String matchCql = LanguageUtil.getNodeMatchCql(node);
         String whereCql = LanguageUtil.getWhereCql(param);
         String removeCql = LanguageUtil.getNodeRemoveLabelCql(node, labelList);
-        String returnCal = LanguageUtil.getNodeReturnCql(node, null);
-        String cql = matchCql + whereCql + removeCql + returnCal;
+        String returnCql = LanguageUtil.getNodeReturnCql(node, null);
+        String cql = matchCql + whereCql + removeCql + returnCql;
         logger.info("deleteNodeLabel ---> cql = " + cql);
 
-        return null;
+        Node n = null;
+        List<Node> result = Neo4jUtil.listNodeReture(Neo4jUtil.runCql(cql), node, null);
+        if(result.size() > 0) {
+            n = result.get(0);
+        }
+        return n;
     }
 
     @Override
     public Node deleteNodeProperty(Node node, String param, List<String> propertyList) {
+
         String matchCql = LanguageUtil.getNodeMatchCql(node);
         String whereCal = LanguageUtil.getWhereCql(param);
         String removeCql = LanguageUtil.getNodeRemovePropertyCql(node, propertyList);
-        String returnCal = LanguageUtil.getNodeReturnCql(node, null);
-        String cql = matchCql + whereCal + removeCql + returnCal;
+        String returnCql = LanguageUtil.getNodeReturnCql(node, null);
+        String cql = matchCql + whereCal + removeCql + returnCql;
         logger.info("deleteNodeProperty ---> cql = " + cql);
 
-        return null;
+        Node n = null;
+        List<Node> result = Neo4jUtil.listNodeReture(Neo4jUtil.runCql(cql), node, null);
+        if(result.size() > 0) {
+            n = result.get(0);
+        }
+        return n;
     }
 
     @Override
@@ -72,25 +108,33 @@ public class NodeServiceImpl implements NodeService {
         Node node = new Node();
         node.setName(nodeName);
         node.setLabels(labelList);
+
         String matchCql = LanguageUtil.getNodeMatchCql(node);
         String whereCql = LanguageUtil.getWhereCql(param);
         String sortCql = LanguageUtil.getNodeSortCql(node, sort);
         String pageCql = LanguageUtil.getPageCql(pageNo, pageSize);
         String returnCql = LanguageUtil.getNodeReturnCql(node, returnMap);
-
         String cql = matchCql + whereCql + returnCql + sortCql + pageCql;
         logger.info("listNode ---> cql = " + cql);
-        return null;
+
+        return Neo4jUtil.listNodeReture(Neo4jUtil.runCql(cql), node, returnMap);
     }
 
     @Override
-    public void updateNodeProperty(Node node, String param) {
+    public Node updateNodeProperty(Node node, String param) {
         String matchCql = LanguageUtil.getNodeMatchCql(node);
-        String whereCal = LanguageUtil.getWhereCql(param);
+        String whereCql = LanguageUtil.getWhereCql(param);
         String setCql = LanguageUtil.getNodeSetPropertyCql(node);
         String returnCql = LanguageUtil.getNodeReturnCql(node, null);
-        String cql = matchCql + whereCal + setCql + returnCql;
+        String cql = matchCql + whereCql + setCql + returnCql;
         logger.info("updateNodeProperty ---> cql = " + cql);
+
+        Node n = null;
+        List<Node> result = Neo4jUtil.listNodeReture(Neo4jUtil.runCql(cql), node, null);
+        if(result.size() > 0) {
+            n = result.get(0);
+        }
+        return n;
     }
 
 }

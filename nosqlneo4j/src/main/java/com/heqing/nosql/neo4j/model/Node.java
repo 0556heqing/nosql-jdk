@@ -12,6 +12,11 @@ import java.util.Map;
 public class Node {
 
     /**
+     * id(唯一标识)
+     */
+    private long id;
+
+    /**
      * 节点名称
      */
     private String name = "";
@@ -25,6 +30,14 @@ public class Node {
      * 一些属性（键值对）
      */
     private Map<String, Object> property = new HashMap<>();
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

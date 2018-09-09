@@ -3,6 +3,7 @@ package com.heqing.nosql.neo4j.manager;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
+import org.neo4j.driver.v1.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,13 +44,7 @@ public class Neo4jManager {
     }
 
     public static Driver getNeo4jDriver() {
-        if (neo4jDriver == null) {
-            neo4jDriver = GraphDatabase.driver("bolt://"+ip+":"+port, AuthTokens.basic(userName, password));
-        }
-        return neo4jDriver;
+        return GraphDatabase.driver("bolt://"+ip+":"+port, AuthTokens.basic(userName, password));
     }
 
-    public static void closeNeo4jDriver() {
-        neo4jDriver.close();
-    }
 }

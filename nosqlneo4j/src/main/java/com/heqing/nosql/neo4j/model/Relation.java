@@ -11,14 +11,19 @@ import java.util.Map;
 public class Relation {
 
     /**
+     * 主键id
+     */
+    private Long id;
+
+    /**
      * 节点名称
      */
     private String name;
 
     /**
-     * 一个或多个节点标签名称
+     * 标签名称
      */
-    private List<String> labels;
+    private String label;
 
     /**
      * 一些属性（键值对）
@@ -35,6 +40,14 @@ public class Relation {
      */
     private Node toNode;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -43,12 +56,12 @@ public class Relation {
         this.name = name;
     }
 
-    public List<String> getLabels() {
-        return labels;
+    public String getLabel() {
+        return label;
     }
 
-    public void setLabels(List<String> labels) {
-        this.labels = labels;
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     public Map<String, Object> getProperty() {

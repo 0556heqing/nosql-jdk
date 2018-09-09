@@ -1,5 +1,6 @@
 package com.heqing.nosql.neo4j;
 
+import com.alibaba.fastjson.JSON;
 import com.heqing.nosql.neo4j.model.Node;
 import com.heqing.nosql.neo4j.model.Relation;
 import org.junit.Test;
@@ -13,111 +14,131 @@ import java.util.*;
 public class TestRelation {
 
     @Test
-    public void createRelationShip() {
+    public void createRelation() {
         Map<String, Object> property = null;
         List<String> labelList = new ArrayList<>();
-        labelList.add("Student");
+        labelList.add("Factions");
 
-        Node student1 = new Node();
-        student1.setName("s1");
-        student1.setLabels(labelList);
+        Node p1 = new Node();
+        p1.setName("p1");
+        p1.setLabels(labelList);
         property = new HashMap<>();
-        property.put("name", "唐老鸭11");
-        property.put("age", 18);
-        property.put("time", new Date());
-        property.put("isMan", true);
-        student1.setProperty(property);
+        property.put("name", "盖聂");
+        property.put("describe", "剑圣");
+        property.put("factions", "纵横家");
+        property.put("age", 28);
+        p1.setProperty(property);
 
-        Node student2 = new Node();
-        student2.setName("s2");
-        student2.setLabels(labelList);
+        Node p2 = new Node();
+        p2.setName("p2");
+        p2.setLabels(labelList);
         property = new HashMap<>();
-        property.put("name", "米老鼠11");
-        property.put("age", 17);
-        property.put("isMan", false);
-        student2.setProperty(property);
+        property.put("name", "卫庄");
+        property.put("describe", "流沙首领");
+        property.put("factions", "纵横家");
+        property.put("age", 27);
+        p2.setProperty(property);
 
-        List<String> labels = new ArrayList<>();
-        labels.add("NOT_LIKE");
         Relation relation = new Relation();
-        relation.setName("like");
-        relation.setLabels(labels);
-        relation.setFromNode(student1);
-        relation.setToNode(student2);
+        relation.setName("f");
+        relation.setLabel("同门");
+        relation.setFromNode(p1);
+        relation.setToNode(p2);
         property = new HashMap<>();
-        property.put("cause", "相隔太远");
-        property.put("time", new Date());
-        property.put("msg", "再见，我的爱");
+        property.put("teacher", "鬼谷子");
         relation.setProperty(property);
 
-        Neo4jUtil.getRelationShip().createRelation(relation);
+        Relation result =  Neo4jUtil.getRelationShip().createRelation(relation);
+        System.out.println("---> createRelation : " + JSON.toJSONString(result));
     }
 
     @Test
     public void listRelation() {
-        List<String> labels = new ArrayList<>();
-        labels.add("NOT_LIKE");
+        Node p1 = new Node();
+        p1.setName("p1");
 
-        Node formNode = new Node();
-        formNode.setName("form");
-        Node toNode = new Node();
-        toNode.setName("to");
+        Node p2 = new Node();
+        p2.setName("p2");
 
         Relation relation = new Relation();
-        relation.setName("r");
-        relation.setLabels(labels);
-        relation.setFromNode(formNode);
-        relation.setToNode(toNode);
+        relation.setName("f");
+        relation.setLabel("同门");
+        relation.setFromNode(p1);
+        relation.setToNode(p2);
 
-        String param = QueryUtil.eq(toNode.getName(), "name", "唐老鸭");
+        String f1 = QueryUtil.eq(p1.getName(), "name", "盖聂");
+        String f2 = QueryUtil.eq(p2.getName(), 70L);
+        String param = QueryUtil.or(f1, f2);
 
-        Neo4jUtil.getRelationShip().listRelation(relation, param, 0, 10);
+        List<Relation> result = Neo4jUtil.getRelationShip().listRelation(relation, param, 0, 10);
+        System.out.println("---> createRelation : " + JSON.toJSONString(result));
     }
 
     @Test
     public void updateRelation() {
-        List<String> labels = new ArrayList<>();
-        labels.add("NOT_LIKE");
+        Map<String, Object> property = null;
+        List<String> labelList = new ArrayList<>();
+        labelList.add("Factions");
 
-        Node formNode = new Node();
-        formNode.setName("form");
-        Map<String, Object> property = new HashMap<>();
-        property.put("age", 18);
-        formNode.setProperty(property);
-        Node toNode = new Node();
-        toNode.setName("to");
+        Node p1 = new Node();
+        p1.setName("p1");
+        p1.setLabels(labelList);
+        property = new HashMap<>();
+        property.put("name", "盖聂");
+        property.put("describe", "剑圣");
+        property.put("factions", "纵横家");
+        property.put("arms", "渊虹");
+        property.put("age", 28);
+        p1.setProperty(property);
+
+        Node p2 = new Node();
+        p2.setName("p2");
+        p2.setLabels(labelList);
+        property = new HashMap<>();
+        property.put("name", "卫庄");
+        property.put("describe", "流沙首领");
+        property.put("factions", "纵横家");
+        property.put("arms", "鲨齿");
+        property.put("age", 27);
+        p2.setProperty(property);
 
         Relation relation = new Relation();
-        relation.setName("r");
-        relation.setLabels(labels);
-        relation.setFromNode(formNode);
-        relation.setToNode(toNode);
+        relation.setName("f");
+        relation.setLabel("同门");
+        relation.setFromNode(p1);
+        relation.setToNode(p2);
         property = new HashMap<>();
-        property.put("year", "2018");
+        property.put("teacher", "鬼谷子");
+        property.put("describe", "苍生涂涂,天下缭燎,诸子百家,唯我纵横");
         relation.setProperty(property);
 
-        String param = QueryUtil.eq(formNode.getName(), "name", "唐老鸭");
+        String f1 = QueryUtil.eq(p1.getName(), "name", "盖聂");
+        String f2 = QueryUtil.eq(p2.getName(), 74L);
+        String param = QueryUtil.and(f1, f2);
 
-        Neo4jUtil.getRelationShip().updateRelation(relation, param);
+        Relation result = Neo4jUtil.getRelationShip().updateRelation(relation, param);
+
+        System.out.println("---> updateRelation : " + JSON.toJSONString(result));
     }
 
     @Test
     public void deleteRelation() {
-        List<String> labels = new ArrayList<>();
-        labels.add("NOT_LIKE");
+        Node p1 = new Node();
+        p1.setName("p1");
 
-        Node formNode = new Node();
-        formNode.setName("form");
-        Node toNode = new Node();
-        toNode.setName("to");
+        Node p2 = new Node();
+        p2.setName("p2");
 
         Relation relation = new Relation();
-        relation.setName("r");
-        relation.setLabels(labels);
-        relation.setFromNode(formNode);
-        relation.setToNode(toNode);
+        relation.setName("f");
+        relation.setLabel("同门");
+        relation.setFromNode(p1);
+        relation.setToNode(p2);
 
-        String param = QueryUtil.eq(formNode.getName(), "name", "唐老鸭");
+        String f1 = QueryUtil.eq(p1.getName(), "name", "盖聂");
+        String f2 = QueryUtil.eq(p2.getName(), 70L);
+        String param = QueryUtil.and(f1, f2);
+
         Neo4jUtil.getRelationShip().deleteRelation(relation, param);
     }
 }

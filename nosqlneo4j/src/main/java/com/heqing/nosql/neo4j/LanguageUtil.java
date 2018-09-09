@@ -59,7 +59,7 @@ public class LanguageUtil {
             Node formNode = relation.getFromNode();
             String formString = "(" + formNode.getName() + getLabel(formNode.getLabels()) + mapToProperty(formNode.getProperty()) + ")";
             // 关系
-            String relationString = "[" + relation.getName() + getLabel(relation.getLabels()) + mapToProperty(relation.getProperty()) + "]";
+            String relationString = "[" + relation.getName() + ":" + relation.getLabel() + mapToProperty(relation.getProperty()) + "]";
             // 指向节点
             Node toNode = relation.getToNode();
             String toString = "(" + toNode.getName() + getLabel(toNode.getLabels()) + mapToProperty(toNode.getProperty()) + ")";
@@ -109,9 +109,10 @@ public class LanguageUtil {
             sb.append(") - [");
             // 关系
             sb.append(relation.getName());
-            if(relation.getLabels() != null && relation.getLabels().size() > 0) {
-                sb.append(getLabel(relation.getLabels()));
+            if(!StringUtil.isNullOrEmpty(relation.getLabel())) {
+                sb.append(":" + relation.getLabel());
             }
+
             sb.append("] -> (");
             // 指向节点
             if(relation.getToNode() != null) {
@@ -160,7 +161,7 @@ public class LanguageUtil {
             Node formNode = relation.getFromNode();
             String formString = "(" + formNode.getName() + getLabel(formNode.getLabels()) + mapToProperty(formNode.getProperty()) + ")";
             // 关系
-            String relationString = "[" + relation.getName() + getLabel(relation.getLabels()) + mapToProperty(relation.getProperty()) + "]";
+            String relationString = "[" + relation.getName() + ":" + relation.getLabel() + mapToProperty(relation.getProperty()) + "]";
             // 指向节点
             Node toNode = relation.getToNode();
             String toString = "(" + toNode.getName() + getLabel(toNode.getLabels()) + mapToProperty(toNode.getProperty()) + ")";
@@ -531,6 +532,8 @@ public class LanguageUtil {
                 sb.append(name + "." + value.getKey());
                 if(value.getValue() != null && !"".equals(value.getValue())) {
                     sb.append(" as " + value.getValue());
+                } else {
+                    sb.append(" as " + value.getKey());
                 }
                 sb.append(",");
             }

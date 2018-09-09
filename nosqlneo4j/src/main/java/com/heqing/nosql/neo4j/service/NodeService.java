@@ -13,23 +13,26 @@ import java.util.Map;
 public interface NodeService {
 
     /**
-     * 修改节点属性
+     * 增加节点标签
      * @param node 节点
      * @param param 筛选条件
      * @param labelList 需要增加的标签
+     * @return 增加标签后的节点信息
      */
-    void addNodeLabel(Node node, String param, List<String> labelList);
+    Node addNodeLabel(Node node, String param, List<String> labelList);
 
     /**
      * 创建节点,若存在则修改
      * @param node 节点
+     * @return 创建成功后的节点信息
      */
-    void createNode(Node node);
+    Node createNode(Node node);
 
     /**
      * 删除所有节点
      * @param node 节点
      * @param param 筛选条件
+     * @return 是否删除成功
      */
     void deleteNode(Node node, String param);
 
@@ -38,7 +41,7 @@ public interface NodeService {
      * @param node 节点
      * @param param 筛选条件
      * @param labelList 需要删除的标签
-     * @return 节点
+     * @return 删除标签后的节点信息
      */
     Node deleteNodeLabel(Node node, String param, List<String> labelList);
 
@@ -47,12 +50,12 @@ public interface NodeService {
      * @param node 节点
      * @param param 筛选条件
      * @param propertyList 需要删除的属性
-     * @return 节点
+     * @return 删除属性后的节点信息
      */
     Node deleteNodeProperty(Node node, String param, List<String> propertyList);
 
     /**
-     * 根据条件获取节点
+     * 根据条件获取节点。建议最后一个参数设为null
      * @param nodeName 节点名
      * @param labelList 标签名
      * @param param 筛选条件，为null不添加筛选条件
@@ -68,7 +71,8 @@ public interface NodeService {
      * 修改节点属性
      * @param node 节点
      * @param param 筛选条件
+     * @return 修改属性后的节点信息
      */
-    void updateNodeProperty(Node node, String param);
+    Node updateNodeProperty(Node node, String param);
 
 }

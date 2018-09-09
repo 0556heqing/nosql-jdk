@@ -18,6 +18,16 @@ public class QueryUtil {
     private static final String UNION_ALL = " UNION ALL ";
 
     /**
+     * 主键id等于
+     * @param name 名称
+     * @param value 值
+     * @return 查询条件
+     */
+    public static String eq(String name, Long value) {
+        return "id(" + name + ") = " + value;
+    }
+
+    /**
      * 等于
      * @param name 名称
      * @param field 字段名
@@ -26,6 +36,16 @@ public class QueryUtil {
      */
     public static String eq(String name, String field, Object value) {
         return name + "." + field + "=" + LanguageUtil.getProperty(value);
+    }
+
+    /**
+     * 主键id不等于
+     * @param name 名称
+     * @param value 值
+     * @return 查询条件
+     */
+    public static String ne(String name, Long value) {
+        return "id(" + name + ") <> " + value;
     }
 
     /**
@@ -40,6 +60,16 @@ public class QueryUtil {
     }
 
     /**
+     * 主键id小于
+     * @param name 名称
+     * @param value 值
+     * @return 查询条件
+     */
+    public static String lt(String name, Long value) {
+        return "id(" + name + ") < " + value;
+    }
+
+    /**
      * 小于
      * @param name 名称
      * @param field 字段名
@@ -48,6 +78,16 @@ public class QueryUtil {
      */
     public static String lt(String name, String field, Double value) {
         return name + "." + field + "<" + value;
+    }
+
+    /**
+     * 主键id小于或等于
+     * @param name 名称
+     * @param value 值
+     * @return 查询条件
+     */
+    public static String lte(String name, Long value) {
+        return "id(" + name + ") <= " + value;
     }
 
     /**
@@ -62,6 +102,16 @@ public class QueryUtil {
     }
 
     /**
+     * 主键id大于
+     * @param name 名称
+     * @param value 值
+     * @return 查询条件
+     */
+    public static String gt(String name, Long value) {
+        return "id(" + name + ") > " + value;
+    }
+
+    /**
      * 大于
      * @param name 名称
      * @param field 字段名
@@ -70,6 +120,16 @@ public class QueryUtil {
      */
     public static String gt(String name, String field, Double value) {
         return name + "." + field + ">" + value;
+    }
+
+    /**
+     * 主键id大于或等于
+     * @param name 名称
+     * @param value 值
+     * @return 查询条件
+     */
+    public static String gte(String name, Long value) {
+        return "id(" + name + ") >= " + value;
     }
 
     /**
@@ -103,6 +163,30 @@ public class QueryUtil {
      */
     public static String isNotNull(String nodeName, String field) {
         return nodeName + "." + field + " IS NOT NULL";
+    }
+
+    /**
+     * 主键id属于
+     * @see <a href="https://www.w3cschool.cn/neo4j/neo4j_cql_in_operator.html">neo4j -> in</a>
+     * @param name 名称
+     * @param values 值
+     * @return 查询条件
+     */
+    public static String in(String name, List<Long> values) {
+        String cql = "";
+        if(values != null && values.size() > 0) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("[");
+            for(Object value : values) {
+                sb.append(" " + LanguageUtil.getProperty(value) +",");
+            }
+            cql = sb.toString();
+            if(cql.endsWith(LanguageUtil.COMMA)) {
+                cql = cql.substring(0, cql.length()-1);
+            }
+            cql = "id(" + name + ") IN " + cql + "]";
+        }
+        return cql;
     }
 
     /**
