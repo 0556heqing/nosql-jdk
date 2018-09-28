@@ -15,6 +15,9 @@ public class RedisManager extends BaseManager {
 
     public static JedisPool getJedisPool() {
         if (jedisPool == null) {
+            if("".equals(password)) {
+                password = null;
+            }
             jedisPool = new JedisPool(poolConfig, ip, port, timeOut, password, dbIndex);
         }
         return jedisPool;
